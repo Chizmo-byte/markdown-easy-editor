@@ -1,0 +1,11 @@
+# Cloudflare Pages configuration for Markdown Easy Editor
+# Optimized for a serverless, client-side-complete Next.js deployment.
+name = "markdown-easy-editor"
+compatibility_date = "2025-06-21"
+
+# Required so the Node.js runtime APIs used by the build are available on the
+# Cloudflare Workers/Pages runtime. v22 is the sanctioned Node baseline.
+compatibility_flags = ["nodejs_compat"]
+
+# Static assets / build output produced by `next build` (App Router).
+pages_build_output_dir = ".next"

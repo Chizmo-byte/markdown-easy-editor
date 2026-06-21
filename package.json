@@ -2,6 +2,9 @@
   "name": "markdown-easy-editor",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0 <24.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,6 +12,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "dompurify": "^3.4.11",
+    "marked": "^18.0.5",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4"
