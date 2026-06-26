@@ -1,76 +1,58 @@
 "use client";
 
 /**
- * メインエディタ画面。
- * useMarkdown フックで状態を取得し、UI コンポーネントを組み合わせるだけ（疎結合）。
+ * LifeMargin メイン画面（エディタコア）。
+ *
+ * 「入力 → 変換 → ソースプレビュー」の基本フロー。
+ * 左カラムに入力した文章を processMarkdown で整形し、右カラムへ
+ * 整形後のマークダウンソースをそのまま表示する。
+ *
+ * 状態は text（入力）と mode（整形モード）の 2 つだけ。
+ * 変換はリアルタイムだが、ラグ防止のため必ず useMemo でラップする。
  */
 
-import type { Platform } from "@/types";
-import { useMarkdown } from "@/hooks/useMarkdown";
-import { listTemplates } from "@/lib/markdown/templates";
-import { Editor } from "@/components/markdown-editor/Editor";
-import { Preview } from "@/components/markdown-editor/Preview";
-import { Toolbar } from "@/components/markdown-editor/Toolbar";
+import { useMemo, useState } from "react";
+
+import type { ProcessMode } from "@/lib/markdown/processor";
+import { processMarkdown } from "@/lib/markdown/processor";
+import { ModeSwitch } from "@/components/editor/ModeSwitch";
+import { MarkdownInput } from "@/components/editor/MarkdownInput";
+import { SourcePreview } from "@/components/editor/SourcePreview";
+
+/**
+ * 出力先プラットフォームの既定値。
+ * まだ UI 上の選択肢を設けていないため、optimize モードのテーブル変換等を
+ * 体験できるよう note を既定とする（将来プラットフォーム選択を追加する想定）。
+ */
+const DEFAULT_TARGET = "note" as const;
 
 export default function Home() {
-  const {
-    markdown,
-    setMarkdown,
-    platform,
-    setPlatform,
-    previewHtml,
-    stats,
-    textareaRef,
-    insertRule,
-  } = useMarkdown();
+  const [text, setText] = useState<string>("");
+  const [mode, setMode] = useState<ProcessMode>("easy");
+
+  // リアルタイム変換。text / mode が変わったときだけ再計算する。
+  const source = useMemo(
+    () => processMarkdown(text, mode, DEFAULT_TARGET),
+    [text, mode],
+  );
 
   return (
-    <div className="flex h-dvh flex-col bg-white dark:bg-zinc-950">
-      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
-        <div>
-          <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-            Markdown Easy Editor
-          </h1>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            初心者向け・ブラウザだけで完結するマークダウンエディタ
-          </p>
-        </div>
-        <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-300">
-          <span>出力先</span>
-          <select
-            value={platform}
-            onChange={(event) => setPlatform(event.target.value as Platform)}
-            className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
-          >
-            {listTemplates().map((template) => (
-              <option key={template.platform} value={template.platform}>
-                {template.label}
-              </option>
-            ))}
-          </select>
-        </label>
+    <div className="flex h-screen flex-col bg-white text-gray-900">
+      <header className="flex h-16 items-center justify-between border-b bg-white p-4">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">
+          LifeMargin
+        </h1>
+        <ModeSwitch mode={mode} onChange={setMode} />
       </header>
 
-      <Toolbar onInsert={insertRule} />
-
-      <main className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-2">
-        <section className="min-h-0 border-b border-zinc-200 md:border-b-0 md:border-r dark:border-zinc-800">
-          <Editor
-            value={markdown}
-            onChange={setMarkdown}
-            textareaRef={textareaRef}
-          />
-        </section>
-        <section className="min-h-0">
-          <Preview html={previewHtml} />
-        </section>
+      <main className="grid h-[calc(100vh-64px)] grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1">
+        <div className="min-h-0 overflow-hidden">
+          <MarkdownInput value={text} onChange={setText} />
+        </div>
+        <div className="min-h-0 overflow-hidden">
+          <SourcePreview source={source} />
+        </div>
       </main>
-
-      <footer className="flex items-center gap-4 border-t border-zinc-200 px-4 py-2 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-        <span>{stats.characters} 文字</span>
-        <span>{stats.words} 語</span>
-        <span>{stats.lines} 行</span>
-      </footer>
     </div>
   );
 }
