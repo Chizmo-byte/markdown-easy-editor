@@ -157,12 +157,26 @@ function collapseDecorationRuns(text: string): string {
 /* Step B-2: Optimize モード                                                   */
 /* -------------------------------------------------------------------------- */
 
-/** ノイズ除去・最適化をまとめて適用する。 */
+/**
+ * ノイズ除去・最適化をまとめて適用する。
+ *
+ * optimize は「最良の出力」を目指すモードであり、easy の体裁修正
+ * （見出し前の空行・リストマーカー正規化・装飾行の集約）も内包する。
+ * その上で AI ノイズ除去・Obsidian 記法の標準化・プラットフォーム最適化を行う。
+ */
 function applyOptimizeMode(text: string, target?: TargetPlatform): string {
+  // 1. ノイズ・固有記法の除去
   let result = removeAiIntro(text);
-  result = stripObsidianSyntax(result);
+  result = stripObsidianSyntax(result); // WikiLink / ブロック ID
+  result = normalizeCallouts(result); // コールアウト → 単純な引用
   result = reduceExcessiveBold(result);
 
+  // 2. easy 相当の体裁修正
+  result = ensureHeadingSpacing(result);
+  result = normalizeListMarkers(result);
+  result = collapseDecorationRuns(result);
+
+  // 3. プラットフォーム別最適化
   if (target === "note" || target === "brain") {
     result = convertTablesToList(result);
     result = dedentDeepLists(result);
@@ -195,7 +209,8 @@ function removeAiIntro(text: string): string {
  * Obsidian 固有記法を標準マークダウンへ変換／除去する。
  * - [[WikiLink]] / [[target|alias]] → 表示名（alias 優先）
  * - 行末のブロック ID（^blockid）→ 削除
- * - コールアウト（> [!INFO] 〜）→ 単純な引用（>）。タグ部分は削除。
+ *
+ * コールアウトの変換は行をまたぐ判定が必要なため {@link normalizeCallouts} が担う。
  */
 function stripObsidianSyntax(text: string): string {
   let result = text;
@@ -209,13 +224,53 @@ function stripObsidianSyntax(text: string): string {
   // ブロック ID: 行末の "^id" を（直前の空白ごと）削除する。
   result = result.replace(/(^|[ \t])\^[A-Za-z0-9_-]+(?=[ \t]*$)/gm, "");
 
-  // コールアウト: "> [!TYPE] タイトル" → "> タイトル"
-  result = result.replace(
-    /^(\s*>)\s*\[![^\]\n]*\][-+]?[ \t]*/gm,
-    "$1 ",
-  );
-
   return result;
+}
+
+/** "> [!TYPE] タイトル"（正規のコールアウト）にマッチ。 */
+const CALLOUT_PROPER_RE = /^(\s*>)\s*\[![^\]\n]+\][-+]?[ \t]*(.*)$/;
+/** "[!TYPE] タイトル"（> が欠けた崩れたコールアウト）にマッチ。 */
+const CALLOUT_BARE_RE = /^\s*\[![^\]\n]+\][-+]?[ \t]*(.*)$/;
+
+/**
+ * Obsidian のコールアウトを単純な引用（>）へ変換する。
+ *
+ * - 正規形 "> [!INFO] 本文" → "> 本文"（タグのみ削除）
+ * - 崩れた形 "[!TIP]"（> なし）→ タグ行を削除し、続く非空行を引用化する。
+ *   AI 出力でしばしば見られる「> が抜けたコールアウト」を救済する目的。
+ */
+function normalizeCallouts(text: string): string {
+  const lines = text.split("\n");
+  const out: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const proper = CALLOUT_PROPER_RE.exec(lines[i]);
+    if (proper) {
+      const [, prefix, title] = proper;
+      out.push(title.length > 0 ? `${prefix} ${title}` : prefix);
+      i += 1;
+      continue;
+    }
+
+    const bare = CALLOUT_BARE_RE.exec(lines[i]);
+    if (bare) {
+      const title = bare[1];
+      if (title.length > 0) out.push(`> ${title}`);
+      i += 1;
+      // タグの後に続く非空行（コールアウト本文）を引用へ変換する。
+      while (i < lines.length && lines[i].trim() !== "") {
+        out.push(`> ${lines[i].replace(/^\s*>?[ \t]?/, "")}`);
+        i += 1;
+      }
+      continue;
+    }
+
+    out.push(lines[i]);
+    i += 1;
+  }
+
+  return out.join("\n");
 }
 
 /**
@@ -261,7 +316,6 @@ function isSeparatorRow(line: string): boolean {
 /**
  * GFM テーブルを「項目名: 内容」形式の箇条書きリストへ変換する。
  * note / brain はテーブル表示が崩れやすいため、行ごとに展開する。
- * レコード間は空行で区切る。
  */
 function convertTablesToList(text: string): string {
   const lines = text.split("\n");
@@ -280,27 +334,43 @@ function convertTablesToList(text: string): string {
       continue;
     }
 
-    const headers = parseTableRow(lines[i]);
+    const header = parseTableRow(lines[i]);
     let j = i + 2;
-    const rows: string[][] = [];
+    const dataRows: string[][] = [];
     while (j < lines.length && isTableRow(lines[j]) && !isSeparatorRow(lines[j])) {
-      rows.push(parseTableRow(lines[j]));
+      dataRows.push(parseTableRow(lines[j]));
       j += 1;
     }
 
-    rows.forEach((row, rowIndex) => {
-      headers.forEach((header, col) => {
-        const value = row[col] ?? "";
-        const label = header.length > 0 ? header : `列${col + 1}`;
-        out.push(`- ${label}: ${value}`);
-      });
-      if (rowIndex < rows.length - 1) out.push("");
-    });
-
+    out.push(...tableToBullets(header, dataRows));
     i = j;
   }
 
   return out.join("\n");
+}
+
+/**
+ * テーブルの見出し行・データ行から箇条書き行を生成する。
+ *
+ * - 2 列テーブル（キー: 値）: 各行を「左: 右」に展開する。見出し行も含める。
+ * - 3 列以上: データ行ごとに「列名: 値」を並べ、レコード間を空行で区切る。
+ */
+function tableToBullets(header: string[], dataRows: string[][]): string[] {
+  if (header.length === 2) {
+    return [header, ...dataRows].map(
+      (row) => `- ${row[0] ?? ""}: ${row[1] ?? ""}`,
+    );
+  }
+
+  const out: string[] = [];
+  dataRows.forEach((row, rowIndex) => {
+    header.forEach((label, col) => {
+      const name = label.length > 0 ? label : `列${col + 1}`;
+      out.push(`- ${name}: ${row[col] ?? ""}`);
+    });
+    if (rowIndex < dataRows.length - 1) out.push("");
+  });
+  return out;
 }
 
 /** リスト項目行（順序なし／順序付き、インデントあり）にマッチ。 */
