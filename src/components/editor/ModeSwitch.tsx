@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * 整形モードの切り替えスイッチ（セグメントコントロール）。
- * Easy / Optimize の 2 値を持ち、選択中のボタンを濃色で強調する。
- * 状態は持たず、親から受け取った値を表示する制御コンポーネント。
+ * 整形モードの切り替えスイッチ（Easy / Optimize）。
+ * 共通の {@link SegmentedControl} を用いた薄いラッパ。
  */
 
 import type { ProcessMode } from "@/lib/markdown/processor";
+import { SegmentedControl } from "@/components/editor/SegmentedControl";
 
 interface ModeSwitchProps {
   /** 現在選択中のモード。 */
@@ -15,37 +15,18 @@ interface ModeSwitchProps {
   onChange: (mode: ProcessMode) => void;
 }
 
-const MODES: ReadonlyArray<{ value: ProcessMode; label: string }> = [
+const MODE_OPTIONS = [
   { value: "easy", label: "Easy" },
   { value: "optimize", label: "Optimize" },
-];
+] as const;
 
 export function ModeSwitch({ mode, onChange }: ModeSwitchProps) {
   return (
-    <div
-      role="group"
-      aria-label="整形モード"
-      className="inline-flex rounded-md border border-gray-300 bg-gray-100 p-0.5"
-    >
-      {MODES.map(({ value, label }) => {
-        const active = value === mode;
-        return (
-          <button
-            key={value}
-            type="button"
-            onClick={() => onChange(value)}
-            aria-pressed={active}
-            className={
-              "rounded px-4 py-1.5 text-sm font-medium transition-colors " +
-              (active
-                ? "bg-gray-800 text-white shadow-sm"
-                : "text-gray-600 hover:text-gray-900")
-            }
-          >
-            {label}
-          </button>
-        );
-      })}
-    </div>
+    <SegmentedControl
+      options={MODE_OPTIONS}
+      value={mode}
+      onChange={onChange}
+      ariaLabel="整形モード"
+    />
   );
 }
