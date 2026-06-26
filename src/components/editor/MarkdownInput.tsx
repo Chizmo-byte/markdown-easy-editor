@@ -10,17 +10,24 @@ interface MarkdownInputProps {
   value: string;
   /** 入力変更時に呼ばれる。 */
   onChange: (value: string) => void;
+  /** textarea への参照（ツールバーの記法挿入で使用）。 */
+  textareaRef?: React.Ref<HTMLTextAreaElement>;
 }
 
-export function MarkdownInput({ value, onChange }: MarkdownInputProps) {
+export function MarkdownInput({
+  value,
+  onChange,
+  textareaRef,
+}: MarkdownInputProps) {
   return (
     <textarea
+      ref={textareaRef}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder="ここに文章を入力、またはObsidianからペーストしてください"
       spellCheck={false}
       aria-label="マークダウン入力"
-      className="h-full w-full resize-none border-r bg-gray-50 p-4 font-mono text-sm outline-none"
+      className="h-full w-full resize-none bg-gray-50 p-4 font-mono text-sm outline-none"
     />
   );
 }

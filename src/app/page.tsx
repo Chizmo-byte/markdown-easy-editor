@@ -17,7 +17,7 @@ import type { ProcessMode, TargetPlatform } from "@/lib/markdown/processor";
 import { processMarkdown } from "@/lib/markdown/processor";
 import { ModeSwitch } from "@/components/editor/ModeSwitch";
 import { PlatformSwitch } from "@/components/editor/PlatformSwitch";
-import { MarkdownInput } from "@/components/editor/MarkdownInput";
+import { EditorPane } from "@/components/editor/EditorPane";
 import { SourcePreview } from "@/components/editor/SourcePreview";
 import { PreviewToolbar } from "@/components/editor/PreviewToolbar";
 
@@ -46,7 +46,7 @@ export default function Home() {
 
       <main className="grid h-[calc(100vh-64px)] grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1">
         <div className="min-h-0 overflow-hidden">
-          <MarkdownInput value={text} onChange={setText} />
+          <EditorPane value={text} onChange={setText} />
         </div>
         <div className="relative min-h-0 overflow-hidden">
           <SourcePreview source={source} />
