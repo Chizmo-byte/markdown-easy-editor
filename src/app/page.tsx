@@ -1,41 +1,88 @@
 /**
  * LifeMargin ランディングページ（ルート /）。
  *
- * プラットフォームのコンセプトを「誠実・シンプル・大衆的」なトーンで伝える静的 LP。
- * 広告感や AI 感を排し、白・グレー・深い青の落ち着いた配色と十分な余白で、
- * 「書くこと・学ぶこと」への集中を促す。CTA から /editor へ誘導する。
+ * 単一ツールの紹介ではなく「デジタルツールプラットフォーム」として構成する静的 LP。
+ * 「誠実・シンプル・知的」なトーンで、白＋薄グレーを基調に濃紺（Navy）をアクセントにし、
+ * 十分な余白で読ませる。Hero → 提供ツール → フィロソフィー → Footer の縦構成。
+ *
+ * ツールは TOOLS 配列で管理し、カードを 1 枚増やすだけで拡張できるようにしている。
  */
 
 import Link from "next/link";
 
-interface Feature {
-  title: string;
+/** 提供ツール 1 件分のメタ情報。`comingSoon` のときは href を持たない。 */
+interface Tool {
+  /** カード見出しのアイコン（軽量化のため絵文字で表現）。 */
+  icon: string;
+  name: string;
   description: string;
+  /** 遷移先。未公開ツールは undefined。 */
+  href?: string;
+  comingSoon?: boolean;
 }
 
-const FEATURES: ReadonlyArray<Feature> = [
+const TOOLS: ReadonlyArray<Tool> = [
   {
-    title: "ルールベースのクレンジング",
+    icon: "📝",
+    name: "Markdown Easy Editor",
     description:
-      "AIが残した不要な装飾やノイズを、決まったルールで静かに削ぎ落とします。意図しない書き換えはありません。",
+      "Brain, note, Obsidianへの投稿を最適化。不要な装飾を自動でクレンジングし、一撃で最適な形式へ変換する軽量エディタ。",
+    href: "/editor",
   },
   {
-    title: "プラットフォーム別テンプレート",
-    description:
-      "Brain・note・Obsidian など、投稿先に合わせた形へ自動で整形。媒体ごとの体裁を気にせず書けます。",
+    icon: "✨",
+    name: "Coming Soon",
+    description: "現在、思考を加速させる新しいツールを開発中です。",
+    comingSoon: true,
   },
   {
-    title: "ワンクリックコピー",
-    description:
-      "整えた文章はそのままコピー、または保存。手間なく投稿フローへつなげられます。",
+    icon: "✨",
+    name: "Coming Soon",
+    description: "現在、思考を加速させる新しいツールを開発中です。",
+    comingSoon: true,
   },
 ];
+
+const PHILOSOPHY: ReadonlyArray<string> = [
+  "現代のデジタルツールは多機能になりすぎている。しかし、本当に必要なのは、思考を妨げない最小限の機能だけである。",
+  "私たちは、不要な装飾や複雑な操作を削ぎ落とし、本質的なアウトプットに集中できる「誠実なツール」を追求します。",
+  "ツールによって生まれた時間のゆとりこそが、人生の余白（Margin）となり、新しい創造性を生むと信じているからです。",
+];
+
+/** 提供ツールカード。公開済みは遷移ボタン、未公開は「Coming Soon」を表示する。 */
+function ToolCard({ icon, name, description, href, comingSoon }: Tool) {
+  return (
+    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
+      <div className="text-3xl" aria-hidden>
+        {icon}
+      </div>
+      <h3 className="mt-4 text-lg font-bold text-gray-900">{name}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">
+        {description}
+      </p>
+      <div className="mt-6">
+        {comingSoon || !href ? (
+          <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-400">
+            Coming Soon
+          </span>
+        ) : (
+          <Link
+            href={href}
+            className="inline-flex items-center rounded-md bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-950"
+          >
+            ツールを使う
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
-      {/* Hero Section */}
-      <section className="flex flex-1 items-center justify-center px-6 py-24">
+      {/* A. Hero Section */}
+      <section className="flex items-center justify-center px-6 py-28">
         <div className="mx-auto max-w-2xl text-center">
           <p className="mb-4 text-sm font-semibold tracking-wide text-blue-900">
             LifeMargin
@@ -44,43 +91,53 @@ export default function LandingPage() {
             書く時間を、価値ある時間に。
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-gray-600">
-            不要な装飾を削ぎ落とし、思考を整理する。Brain, note, Obsidian
-            に最適化した軽量マークダウンエディタ。
+            人生にゆとりを。LifeMarginは、デジタル作業のムダを削ぎ落とし、思考の整理とアウトプットを最速化するツール群を提供します。
           </p>
           <div className="mt-10">
-            <Link
-              href="/editor"
+            <a
+              href="#tools"
               className="inline-flex items-center justify-center rounded-md bg-blue-900 px-8 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-950"
             >
-              エディタを使う
-            </Link>
+              ツール一覧へ
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="border-t bg-gray-50 px-6 py-20">
+      {/* B. Tool Grid Section */}
+      <section id="tools" className="scroll-mt-8 border-t bg-white px-6 py-20">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-center text-sm font-bold tracking-wide text-gray-700">
-            できること
+          <h2 className="text-center text-xl font-bold tracking-tight text-gray-900">
+            提供ツール
           </h2>
-          <ul className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {FEATURES.map(({ title, description }) => (
-              <li
-                key={title}
-                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
-              >
-                <h3 className="text-base font-bold text-gray-900">{title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-gray-600">
-                  {description}
-                </p>
-              </li>
+          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {TOOLS.map((tool, i) => (
+              <ToolCard key={`${tool.name}-${i}`} {...tool} />
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* C. Philosophy Section（AdSense対策・独自コンテンツ） */}
+      <section className="border-t bg-gray-50 px-6 py-20">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="text-center text-xl font-bold tracking-tight text-gray-900">
+            なぜ、LifeMarginなのか
+          </h2>
+          <div className="mt-10 space-y-6">
+            {PHILOSOPHY.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="text-base leading-loose text-gray-700"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* D. Footer */}
       <footer className="border-t bg-white px-6 py-8">
         <p className="text-center text-xs text-gray-500">© 2026 LifeMargin</p>
       </footer>
