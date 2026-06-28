@@ -56,20 +56,20 @@ interface EditorToolbarProps {
 
 export function EditorToolbar({ onInsert }: EditorToolbarProps) {
   return (
-    <div className="flex flex-wrap gap-2 border-b bg-white p-2">
+    <div className="flex flex-wrap gap-2 border-b border-hairline bg-surface p-2.5">
       {BUTTONS.map(({ label, tip, action }) => (
         <div key={label} className="group relative">
           <button
             type="button"
             onClick={() => onInsert(action)}
-            className="flex items-center gap-1 rounded border border-gray-200 bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200"
+            className="flex items-center gap-1 rounded-full border border-hairline bg-canvas px-3.5 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent-ink"
           >
             {label}
           </button>
           {/* ツールチップ: 入力を妨げないよう pointer-events-none。ホバー/フォーカスでふわっと表示。 */}
           <span
             role="tooltip"
-            className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[10px] text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+            className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-[10px] text-surface opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
           >
             {tip}
           </span>

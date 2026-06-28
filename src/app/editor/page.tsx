@@ -12,6 +12,7 @@
  */
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
 import type { ProcessMode, TargetPlatform } from "@/lib/markdown/processor";
 import { processMarkdown } from "@/lib/markdown/processor";
@@ -34,11 +35,14 @@ export default function EditorPage() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-gray-900">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white p-4">
-        <h1 className="text-xl font-bold tracking-tight text-gray-900">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-hairline bg-surface px-5">
+        <Link
+          href="/"
+          className="font-serif text-xl font-semibold tracking-tight text-ink transition-opacity hover:opacity-70"
+        >
           LifeMargin
-        </h1>
+        </Link>
         <div className="flex items-center gap-3">
           <ModeSwitch mode={mode} onChange={setMode} />
           <PlatformSwitch target={target} onChange={setTarget} />

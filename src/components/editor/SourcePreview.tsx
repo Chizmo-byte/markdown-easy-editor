@@ -13,11 +13,11 @@ interface SourcePreviewProps {
 
 export function SourcePreview({ source }: SourcePreviewProps) {
   return (
-    <pre className="h-full w-full overflow-auto whitespace-pre-wrap break-words bg-white p-4 font-mono text-sm text-gray-800">
+    <pre className="h-full w-full overflow-auto whitespace-pre-wrap break-words bg-surface p-4 font-mono text-sm text-ink">
       {source.length > 0 ? (
         source
       ) : (
-        <span className="text-gray-400">整形結果がここに表示されます</span>
+        <span className="text-ink-muted">整形結果がここに表示されます</span>
       )}
     </pre>
   );

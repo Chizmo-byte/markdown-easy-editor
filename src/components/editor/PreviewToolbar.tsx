@@ -65,10 +65,10 @@ export function PreviewToolbar({ source, target }: PreviewToolbarProps) {
 
   const disabled = source.length === 0;
   const buttonClass =
-    "rounded-md border border-gray-300 bg-white/90 px-3 py-1.5 text-sm font-medium " +
-    "text-gray-700 shadow-sm backdrop-blur transition-all duration-150 " +
-    "hover:bg-gray-100 hover:text-gray-900 hover:shadow active:scale-95 " +
-    "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white/90";
+    "rounded-full border border-hairline bg-surface/90 px-4 py-1.5 text-sm font-medium " +
+    "text-ink-secondary shadow-sm backdrop-blur transition-all duration-150 " +
+    "hover:border-accent hover:bg-accent-soft hover:text-accent-ink hover:shadow active:scale-95 " +
+    "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-hairline disabled:hover:bg-surface/90 disabled:hover:text-ink-secondary";
 
   return (
     <>
@@ -86,7 +86,7 @@ export function PreviewToolbar({ source, target }: PreviewToolbarProps) {
         aria-live="polite"
         className={
           "pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full " +
-          "bg-gray-800 px-4 py-1.5 text-sm text-white shadow-lg transition-opacity duration-500 " +
+          "bg-ink px-4 py-1.5 text-sm text-surface shadow-lg transition-opacity duration-500 " +
           (toastVisible ? "opacity-100" : "opacity-0")
         }
       >

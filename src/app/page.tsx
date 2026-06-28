@@ -1,11 +1,12 @@
 /**
  * LifeMargin ランディングページ（ルート /）。
  *
- * 単一ツールの紹介ではなく「デジタルツールプラットフォーム」として構成する静的 LP。
- * 「誠実・シンプル・知的」なトーンで、白＋薄グレーを基調に濃紺（Navy）をアクセントにし、
- * 十分な余白で読ませる。Hero → 提供ツール → フィロソフィー → Footer の縦構成。
+ * 「デジタルツールプラットフォーム」を、温かいオフホワイトの紙の上に置かれた
+ * document のように見せる。重要な見出しはセリフ（明朝）で品よく、CTA だけ 1 色の
+ * 親しみやすいグリーンで効かせる。均等な格子感を避け、たっぷりの余白で「人生の余白」
+ * を感じさせる。デザイントークンと原則は DESIGN.md に従う。
  *
- * ツールは TOOLS 配列で管理し、カードを 1 枚増やすだけで拡張できるようにしている。
+ * ツールは TOOLS 配列で管理し、カードを 1 枚増やすだけで拡張できる。
  */
 
 import Link from "next/link";
@@ -30,13 +31,13 @@ const TOOLS: ReadonlyArray<Tool> = [
     href: "/editor",
   },
   {
-    icon: "✨",
+    icon: "🌱",
     name: "Coming Soon",
     description: "現在、思考を加速させる新しいツールを開発中です。",
     comingSoon: true,
   },
   {
-    icon: "✨",
+    icon: "🌱",
     name: "Coming Soon",
     description: "現在、思考を加速させる新しいツールを開発中です。",
     comingSoon: true,
@@ -49,29 +50,35 @@ const PHILOSOPHY: ReadonlyArray<string> = [
   "ツールによって生まれた時間のゆとりこそが、人生の余白（Margin）となり、新しい創造性を生むと信じているからです。",
 ];
 
-/** 提供ツールカード。公開済みは遷移ボタン、未公開は「Coming Soon」を表示する。 */
+/** 提供ツールカード。公開済みは緑の CTA、未公開は淡いグリーンの面で「Coming Soon」。 */
 function ToolCard({ icon, name, description, href, comingSoon }: Tool) {
+  const live = !comingSoon && href;
   return (
-    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
-      <div className="text-3xl" aria-hidden>
+    <div
+      className={
+        "flex flex-col rounded-3xl border border-hairline p-8 transition-shadow " +
+        (live ? "bg-surface hover:shadow-md" : "bg-accent-soft/60")
+      }
+    >
+      <div className="text-4xl" aria-hidden>
         {icon}
       </div>
-      <h3 className="mt-4 text-lg font-bold text-gray-900">{name}</h3>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">
+      <h3 className="mt-5 font-serif text-xl font-semibold text-ink">{name}</h3>
+      <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-secondary">
         {description}
       </p>
-      <div className="mt-6">
-        {comingSoon || !href ? (
-          <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-400">
-            Coming Soon
-          </span>
-        ) : (
+      <div className="mt-8">
+        {live ? (
           <Link
             href={href}
-            className="inline-flex items-center rounded-md bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-950"
+            className="inline-flex items-center rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-accent-ink transition-colors hover:bg-accent-hover active:scale-95"
           >
             ツールを使う
           </Link>
+        ) : (
+          <span className="inline-flex items-center rounded-full border border-hairline bg-surface/70 px-5 py-2.5 text-sm font-medium text-ink-muted">
+            準備中
+          </span>
         )}
       </div>
     </div>
@@ -80,23 +87,25 @@ function ToolCard({ icon, name, description, href, comingSoon }: Tool) {
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white text-gray-900">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       {/* A. Hero Section */}
-      <section className="flex items-center justify-center px-6 py-28">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-4 text-sm font-semibold tracking-wide text-blue-900">
+      <section className="px-6 py-28 sm:py-32">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="inline-flex items-center rounded-full bg-accent-soft px-4 py-1.5 text-xs font-semibold tracking-wide text-accent-ink">
             LifeMargin
-          </p>
-          <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 sm:text-4xl">
-            書く時間を、価値ある時間に。
+          </span>
+          <h1 className="mt-8 font-serif text-4xl font-bold leading-[1.25] tracking-tight text-ink sm:text-5xl sm:leading-[1.25]">
+            書く時間を、
+            <br className="hidden sm:block" />
+            価値ある時間に。
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-gray-600">
+          <p className="mx-auto mt-8 max-w-xl text-base leading-loose text-ink-secondary">
             人生にゆとりを。LifeMarginは、デジタル作業のムダを削ぎ落とし、思考の整理とアウトプットを最速化するツール群を提供します。
           </p>
-          <div className="mt-10">
+          <div className="mt-12">
             <a
               href="#tools"
-              className="inline-flex items-center justify-center rounded-md bg-blue-900 px-8 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-950"
+              className="inline-flex items-center justify-center rounded-full bg-accent px-9 py-3.5 text-base font-semibold text-accent-ink shadow-sm transition-colors hover:bg-accent-hover active:scale-95"
             >
               ツール一覧へ
             </a>
@@ -105,12 +114,15 @@ export default function LandingPage() {
       </section>
 
       {/* B. Tool Grid Section */}
-      <section id="tools" className="scroll-mt-8 border-t bg-white px-6 py-20">
+      <section id="tools" className="scroll-mt-10 px-6 py-20">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-center text-xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-center font-serif text-3xl font-semibold tracking-tight text-ink">
             提供ツール
           </h2>
-          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <p className="mt-4 text-center text-sm text-ink-muted">
+            あなたの「書く」を軽くする道具を、ひとつずつ。
+          </p>
+          <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {TOOLS.map((tool, i) => (
               <ToolCard key={`${tool.name}-${i}`} {...tool} />
             ))}
@@ -119,16 +131,16 @@ export default function LandingPage() {
       </section>
 
       {/* C. Philosophy Section（AdSense対策・独自コンテンツ） */}
-      <section className="border-t bg-gray-50 px-6 py-20">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-center text-xl font-bold tracking-tight text-gray-900">
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-3xl rounded-3xl bg-accent-soft px-8 py-16 sm:px-14">
+          <h2 className="text-center font-serif text-3xl font-semibold tracking-tight text-ink">
             なぜ、LifeMarginなのか
           </h2>
-          <div className="mt-10 space-y-6">
+          <div className="mt-12 space-y-8">
             {PHILOSOPHY.map((paragraph) => (
               <p
                 key={paragraph}
-                className="text-base leading-loose text-gray-700"
+                className="text-base leading-loose text-ink-secondary"
               >
                 {paragraph}
               </p>
@@ -138,8 +150,8 @@ export default function LandingPage() {
       </section>
 
       {/* D. Footer */}
-      <footer className="border-t bg-white px-6 py-8">
-        <p className="text-center text-xs text-gray-500">© 2026 LifeMargin</p>
+      <footer className="mt-8 border-t border-hairline px-6 py-10">
+        <p className="text-center text-xs text-ink-muted">© 2026 LifeMargin</p>
       </footer>
     </div>
   );

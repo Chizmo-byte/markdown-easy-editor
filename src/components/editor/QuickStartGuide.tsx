@@ -40,32 +40,34 @@ export function QuickStartGuide() {
   return (
     <section
       aria-labelledby="quick-start-heading"
-      className="border-t bg-gray-50 px-4 py-8"
+      className="border-t border-hairline bg-canvas px-4 py-12"
     >
       <div className="mx-auto max-w-5xl">
         <h2
           id="quick-start-heading"
-          className="mb-1 text-center text-sm font-bold tracking-wide text-gray-700"
+          className="mb-1 text-center font-serif text-lg font-semibold tracking-tight text-ink"
         >
           かんたん3ステップ
         </h2>
-        <p className="mb-6 text-center text-xs text-gray-500">
+        <p className="mb-8 text-center text-xs text-ink-muted">
           迷ったら、この順番でやってみてください。
         </p>
 
-        <ol className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <ol className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {STEPS.map(({ step, title, description }) => (
             <li
               key={step}
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm"
+              className="rounded-3xl border border-hairline bg-surface p-7"
             >
-              <div className="mb-3 flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-accent-ink">
                   {step}
                 </span>
-                <h3 className="text-sm font-bold text-gray-900">{title}</h3>
+                <h3 className="font-serif text-base font-semibold text-ink">
+                  {title}
+                </h3>
               </div>
-              <p className="text-xs leading-relaxed text-gray-600">
+              <p className="text-xs leading-relaxed text-ink-secondary">
                 {description}
               </p>
             </li>

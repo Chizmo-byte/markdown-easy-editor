@@ -27,7 +27,7 @@ export function MarkdownInput({
       placeholder="ここに文章を入力、またはObsidianからペーストしてください"
       spellCheck={false}
       aria-label="マークダウン入力"
-      className="h-full w-full resize-none bg-gray-50 p-4 font-mono text-sm outline-none"
+      className="h-full w-full resize-none bg-canvas p-4 font-mono text-sm text-ink outline-none placeholder:text-ink-muted"
     />
   );
 }

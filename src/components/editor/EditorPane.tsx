@@ -96,7 +96,7 @@ export function EditorPane({ value, onChange }: EditorPaneProps) {
   };
 
   return (
-    <div className="flex h-full flex-col border-r">
+    <div className="flex h-full flex-col border-r border-hairline">
       <EditorToolbar onInsert={handleInsert} />
       <div className="min-h-0 flex-1">
         <MarkdownInput
