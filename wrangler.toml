@@ -8,4 +8,4 @@ compatibility_date = "2025-06-21"
 compatibility_flags = ["nodejs_compat"]
 
 # Static assets / build output produced by `next build` (App Router).
-pages_build_output_dir = ".next"
+pages_build_output_dir = ".vercel/output/static"
