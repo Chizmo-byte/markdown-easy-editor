@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Markdown Easy Editor",
+  title: "LifeMargin — 書く時間を、価値ある時間に。",
   description:
-    "初心者向け・ブラウザだけで完結するシンプルなマークダウンエディタ",
+    "不要な装飾を削ぎ落とし、思考を整理する。Brain, note, Obsidian に最適化した軽量マークダウンエディタ。",
 };
 
 export default function RootLayout({

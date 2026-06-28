@@ -1,71 +1,98 @@
-# CLAUDE.md — Markdown Easy Editor
+# CLAUDE.md — MarkdownEasyEditor
 
-AI 開発者向けの開発ガイドです。本リポジトリで作業する際は、必ずこのガイドの制約とルールに従ってください。
+このファイルはClaude Code（Cursor経由）が作業前に必ず読む指示書です。
+実装・コミット前に必ず全体を確認してください。
 
-## 概要
+---
 
-初心者向けマークダウンエディタ **「Markdown Easy Editor」** の開発。
-マークダウン記法に不慣れなユーザーでも、ボタン操作とリアルタイムプレビューで
-迷わず文章を書けることを目的とする。完全クライアントサイドで動作する。
+## プロジェクト概要
+
+| 項目 | 内容 |
+|------|------|
+| プロジェクト名 | MarkdownEasyEditor |
+| ブランド | LifeMargin（lifemargin.net・取得予定） |
+| コンセプト | AI時代のMarkdown入門・教育型エディタ |
+| ターゲット | AIツールに不慣れな人・Markdown初心者・非エンジニア |
+| ローカルパス | `C:\Users\teram\Desktop\Claude\markdown-easy-editor` |
+| リポジトリ | https://github.com/Chizmo-byte/markdown-easy-editor（Private） |
+| ホスティング | Cloudflare Pages（予定） |
+| ドメイン | lifemargin.net（取得予定） |
+
+---
 
 ## 技術スタック
 
-- **Next.js**（App Router）
-- **TypeScript**（strict）
-- **TailwindCSS**
-- **Cloudflare Pages**（ホスティング / デプロイ先）
-- マークダウン → HTML 変換: `marked`
+| 項目 | バージョン／詳細 |
+|------|-----------------|
+| Next.js | 16.2.9 |
+| React | 19 |
+| TypeScript | 最新安定版 |
+| Tailwind CSS | v4 |
+| Node.js | **v22系のみ（v24は動作不良・使用禁止）** |
+| XSS対策 | DOMPurify |
 
-## 環境制約（安定稼働の聖域）
+---
 
-- **Node.js v22 必須。** `.nvmrc` / `.node-version` で `22` に固定済み。
-- **Node.js v24 は絶対禁止。** v24 ではビルド／開発サーバーがハングアップするため、
-  いかなる理由があっても使用しないこと。
-- `package.json` の `engines` で `"node": ">=22.0.0 <24.0.0"` を強制している。
-  この範囲を緩めてはならない。
-- Cloudflare Pages 用に `wrangler.toml` で
-  `compatibility_flags = ["nodejs_compat"]` を設定済み。
+## 環境・開発ルール（必読）
 
-## 開発ルール
+### ⚠️ Node.jsバージョン
+- **v22系のみ使用**（現在 v22.22.3）
+- v24は不具合あり・絶対に使用しない
+- `.nvmrc` が存在する場合は必ず従うこと
 
-- **パフォーマンス優先。** First Load JS を最小化する。重いライブラリの追加は避け、
-  クライアントへ送るバンドルを常に意識する。
-- **サーバーレス / クライアントサイド完結型の設計。**
-  変換・プレビューはすべてブラウザ内で完結させる。サーバー側の状態やDBを持たない。
-- **厳格な型定義の遵守。** `any` を避け、共通の型は `src/types` に集約する。
-  `npx tsc --noEmit` がパスする状態を常に保つこと。
-- **疎結合アーキテクチャ。** ロジック層（`src/lib/markdown`）は純粋な TS 関数とし、
-  React/DOM へ依存させない。UI（`src/components`）はロジックを呼び出すだけにする。
+### Git運用ルール
+- **コミットまではClaude Codeが行う**
+- **pushはChizmo本人が手動で行う**（Claude Codeはpushしない）
+- 1回の指示で実装するのは**1機能のみ**
+- `npm run dev` でローカル動作確認してからコミット
+- **完了定義：** 実装後、`npm run build` が通り、ローカルで意図した挙動が確認できた時点でコミットすること（`npm run dev` だけではビルド時にのみ発生するエラーを見逃す可能性があるため）
 
-## セキュリティ
+### デプロイルール
+- デプロイは最小限にまとめてから実施
+- Cloudflare Pagesのビルド設定は以下を厳守：
+  - Build command：`npx @cloudflare/next-on-pages@1`
+  - Build output directory：`.vercel/output/static`
+  - 環境変数：`NODE_VERSION = 22`
+  - Compatibility Flags：`nodejs_compat`（Production・Preview両方に必須）
 
-- **依存ライブラリは最小限に。** 追加前に本当に必要か検討する。
-- 依存追加時は `npm audit` 等でセキュリティチェックを実施する。
-- マークダウンを HTML として描画するため、**XSS に注意**すること。
-  信頼できない入力をそのまま `dangerouslySetInnerHTML` に渡さない方針を守る。
+### コーディング方針
+- TypeScriptの型を省略しない
+- ユーザー入力は必ずサニタイズ（DOMPurify使用）
+- コンポーネントは単一責任を保つ
+- ChizmoToolsとは**別ブランド**として運用するため、chizmotools.comのコードや資材を流用しない
 
-## ディレクトリ構成（疎結合）
+---
 
-```
-src/
-  app/
-    page.tsx                 # メインエディタ画面
-  components/
-    markdown-editor/         # 専用UIコンポーネント（軽量設計）
-      Editor.tsx             # 入力エリア
-      Toolbar.tsx            # 記号挿入ボタン（アイコン＋ガイド付）
-      Preview.tsx            # リアルタイムプレビュー（marked 利用）
-      Tooltip.tsx            # 汎用ツールチップ
-  lib/
-    markdown/                # 【脳】ロジック層（純粋な TS 関数）
-      rules.ts               # ルールベースDB（置換パターン集）
-      templates.ts           # プラットフォーム別出力テンプレート
-      converter.ts           # 変換エンジン
-      utils.ts               # 共通ユーティリティ
-  hooks/
-    useMarkdown.ts           # 状態管理カスタムフック
-  types/
-    index.ts                 # 型定義
-```
+## AIツール構成と役割分担
 
-@AGENTS.md
+| ツール | 役割 |
+|--------|------|
+| すあま（Gemma API・Discord） | 実装指示書の作成・タスク設計 |
+| Claude.ai | プロジェクト方針レビュー・記事作成補助 |
+| Claude Code（Cursor MCP） | 実装・コミット |
+
+**すあまが指示書を作成 → Claude Codeが実装**という流れが基本です。
+指示書に不明点がある場合は実装を止めてChizmoに確認すること。
+
+---
+
+## 収益化
+
+- Google AdSense：`ca-pub-9656973492441310`
+- 審査状況：再申請中（2026年6月18日申請）
+- AdSense関連のコードを追加・変更する際はセキュリティチェックを実施すること
+
+---
+
+## セキュリティチェック
+
+このプロジェクトにはsecurity-guidanceプラグインが導入されています。
+以下のタイミングで必ずセキュリティチェックを実行してください：
+
+- 新しいAPIエンドポイントを追加したとき
+- ユーザー入力を処理するコードを追加・変更したとき
+- 外部ライブラリを追加したとき
+- 認証・セッション関連のコードを変更したとき
+- git pushの前（重要な変更がある場合）
+
+確認後、コミットまで行い、pushは自分でやります。
