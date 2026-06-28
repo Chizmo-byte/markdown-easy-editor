@@ -20,6 +20,7 @@ import { PlatformSwitch } from "@/components/editor/PlatformSwitch";
 import { EditorPane } from "@/components/editor/EditorPane";
 import { SourcePreview } from "@/components/editor/SourcePreview";
 import { PreviewToolbar } from "@/components/editor/PreviewToolbar";
+import { QuickStartGuide } from "@/components/editor/QuickStartGuide";
 
 export default function Home() {
   const [text, setText] = useState<string>("");
@@ -33,8 +34,8 @@ export default function Home() {
   );
 
   return (
-    <div className="flex h-screen flex-col bg-white text-gray-900">
-      <header className="flex h-16 items-center justify-between border-b bg-white p-4">
+    <div className="flex min-h-screen flex-col bg-white text-gray-900">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white p-4">
         <h1 className="text-xl font-bold tracking-tight text-gray-900">
           LifeMargin
         </h1>
@@ -44,7 +45,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="grid h-[calc(100vh-64px)] grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1">
+      <main className="grid h-[calc(100vh-64px)] shrink-0 grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1">
         <div className="min-h-0 overflow-hidden">
           <EditorPane value={text} onChange={setText} />
         </div>
@@ -53,6 +54,8 @@ export default function Home() {
           <PreviewToolbar source={source} target={target} />
         </div>
       </main>
+
+      <QuickStartGuide />
     </div>
   );
 }
