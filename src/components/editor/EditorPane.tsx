@@ -1,22 +1,12 @@
 "use client";
 
-/**
- * 左カラム（ツールバー + 入力 textarea）。
- *
- * textarea の参照を保持し、ツールバーから要求された記法挿入を実行する。
- * 挿入後はカーソル位置を復元し、即座にフォーカスを戻して連続入力できるようにする。
- * 本文の状態は親（page）が保持するため、変換結果は通常どおりプレビューへ反映される。
- */
-
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { EditorToolbar, type ToolbarAction } from "@/components/editor/EditorToolbar";
 import { MarkdownInput } from "@/components/editor/MarkdownInput";
 
 interface EditorPaneProps {
-  /** 現在の入力テキスト。 */
   value: string;
-  /** 入力変更時に呼ばれる。 */
   onChange: (value: string) => void;
 }
 
@@ -26,78 +16,90 @@ interface InsertResult {
   selectionEnd: number;
 }
 
-/**
- * 記法挿入を適用し、新しいテキストと復元すべき選択範囲を返す（純粋関数）。
- *
- * - wrap: 選択ありは marker で囲み中身を選択状態に、選択なしは marker の間へカーソルを置く。
- * - insert: 選択範囲を snippet で置換し、その直後へカーソルを移動する。
- */
 function applyAction(
   text: string,
   start: number,
   end: number,
   action: ToolbarAction,
 ): InsertResult {
-  const before = text.slice(0, start);
-  const selected = text.slice(start, end);
-  const after = text.slice(end);
-
   if (action.kind === "wrap") {
-    const { marker } = action;
-    if (selected.length > 0) {
-      const innerStart = start + marker.length;
-      return {
-        text: before + marker + selected + marker + after,
-        selectionStart: innerStart,
-        selectionEnd: innerStart + selected.length,
-      };
-    }
-    const caret = start + marker.length;
+    const selected = text.slice(start, end);
+    const replacement = `${action.marker}${selected || "文字"}${action.marker}`;
+    const nextStart = start + action.marker.length;
+    const nextEnd = nextStart + (selected || "文字").length;
     return {
-      text: before + marker + marker + after,
-      selectionStart: caret,
-      selectionEnd: caret,
+      text: text.slice(0, start) + replacement + text.slice(end),
+      selectionStart: nextStart,
+      selectionEnd: nextEnd,
     };
   }
 
-  const caret = start + action.snippet.length;
+  if (action.kind === "link") {
+    const selected = text.slice(start, end) || "リンク文字";
+    const replacement = `[${selected}](URL)`;
+    const urlStart = start + selected.length + 3;
+    return {
+      text: text.slice(0, start) + replacement + text.slice(end),
+      selectionStart: urlStart,
+      selectionEnd: urlStart + 3,
+    };
+  }
+
+  const lineStart = text.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+  const lineEndIndex = text.indexOf("\n", end);
+  const lineEnd = lineEndIndex === -1 ? text.length : lineEndIndex;
+  const selectedLines = text.slice(lineStart, lineEnd);
+  const lines = selectedLines.split("\n");
+  const allPrefixed = lines.every((line) => line.startsWith(action.prefix));
+  const updatedLines = lines.map((line) =>
+    allPrefixed ? line.slice(action.prefix.length) : `${action.prefix}${line}`,
+  );
+  const replacement = updatedLines.join("\n");
+  const delta = replacement.length - selectedLines.length;
   return {
-    text: before + action.snippet + after,
-    selectionStart: caret,
-    selectionEnd: caret,
+    text: text.slice(0, lineStart) + replacement + text.slice(lineEnd),
+    selectionStart: Math.max(lineStart, start + (allPrefixed ? -action.prefix.length : action.prefix.length)),
+    selectionEnd: Math.max(lineStart, end + delta),
   };
 }
 
 export function EditorPane({ value, onChange }: EditorPaneProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  // 次の描画後に復元すべき選択範囲。挿入操作のときだけ設定する。
   const pendingSelection = useRef<{ start: number; end: number } | null>(null);
+  const [activeHelp, setActiveHelp] = useState<string | null>(null);
 
-  // テキスト更新後に、選択範囲とフォーカスを復元する。
   useEffect(() => {
     const pending = pendingSelection.current;
-    const el = textareaRef.current;
-    if (!pending || !el) return;
-    el.focus();
-    el.setSelectionRange(pending.start, pending.end);
+    const element = textareaRef.current;
+    if (!pending || !element) return;
+    element.focus();
+    element.setSelectionRange(pending.start, pending.end);
     pendingSelection.current = null;
   }, [value]);
 
   const handleInsert = (action: ToolbarAction) => {
-    const el = textareaRef.current;
-    if (!el) return;
-    const result = applyAction(el.value, el.selectionStart, el.selectionEnd, action);
+    const element = textareaRef.current;
+    if (!element) return;
+    const result = applyAction(
+      element.value,
+      element.selectionStart,
+      element.selectionEnd,
+      action,
+    );
     pendingSelection.current = {
       start: result.selectionStart,
       end: result.selectionEnd,
     };
     onChange(result.text);
-    el.focus();
   };
 
   return (
-    <div className="flex h-full flex-col border-r border-hairline">
-      <EditorToolbar onInsert={handleInsert} />
+    <div className="flex h-full min-h-0 flex-col border-r border-zinc-200 bg-white">
+      <EditorToolbar
+        onInsert={handleInsert}
+        activeHelp={activeHelp}
+        onHelpChange={setActiveHelp}
+      />
       <div className="min-h-0 flex-1">
         <MarkdownInput
           value={value}

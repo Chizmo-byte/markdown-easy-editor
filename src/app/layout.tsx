@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Shippori_Mincho } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,18 +12,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 重要な見出し用の明朝（セリフ）。落ち着いた品位と「人生の余白」の温度感を担う。
-const shipporiMincho = Shippori_Mincho({
-  variable: "--font-serif-display",
-  weight: ["600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "LifeMargin — 書く時間を、価値ある時間に。",
+  title: "Markdown Easy Editor｜学びながら書けるMarkdownエディタ",
   description:
-    "不要な装飾を削ぎ落とし、思考を整理する。Brain, note, Obsidian に最適化した軽量マークダウンエディタ。",
+    "Markdownを入力し、記法ボタンとリアルタイムプレビューで学びながら編集できるエディタ。",
 };
 
 export default function RootLayout({
@@ -33,12 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${shipporiMincho.variable} h-full scroll-smooth antialiased`}
+      lang="ja"
+      className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-canvas text-ink">
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

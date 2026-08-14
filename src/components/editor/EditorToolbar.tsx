@@ -1,22 +1,13 @@
 "use client";
 
-/**
- * 記法挿入ツールバー（エディタ上部・教育型）。
- *
- * 各ボタンはマークダウン記法を挿入しつつ、ホバー時に「なぜその記法を使うのか」
- * という教育的 Tips をツールチップで表示する。記法入力の手間をゼロにしながら、
- * 文章構成の作法を学べる状態をつくることが狙い。
- *
- * 挿入の実処理は持たず、押された記法（ToolbarAction）を onInsert で親へ通知する。
- */
-
-/** ボタンが要求する挿入操作。 */
 export type ToolbarAction =
-  | { kind: "wrap"; marker: string } // 選択範囲を marker で囲む（強調など）
-  | { kind: "insert"; snippet: string }; // カーソル位置に snippet を挿入
+  | { kind: "line-prefix"; prefix: string; label: string }
+  | { kind: "wrap"; marker: string; label: string }
+  | { kind: "link"; label: string };
 
 interface ToolbarButtonDef {
   label: string;
+  shortcut: string;
   tip: string;
   action: ToolbarAction;
 }
@@ -24,57 +15,99 @@ interface ToolbarButtonDef {
 const BUTTONS: ReadonlyArray<ToolbarButtonDef> = [
   {
     label: "見出し",
-    tip: "ここが文章の看板です。読者が一目で内容を理解できる結論を書きましょう",
-    action: { kind: "insert", snippet: "# " },
+    shortcut: "# 見出し",
+    tip: "文章の構造を示すタイトルです。現在の行に見出しを付けます。",
+    action: { kind: "line-prefix", prefix: "# ", label: "見出し" },
+  },
+  {
+    label: "太字",
+    shortcut: "**文字**",
+    tip: "重要な言葉を目立たせます。文字を選択してから押すと、その範囲を強調できます。",
+    action: { kind: "wrap", marker: "**", label: "太字" },
+  },
+  {
+    label: "斜体",
+    shortcut: "*文字*",
+    tip: "軽く強調したい言葉に使います。",
+    action: { kind: "wrap", marker: "*", label: "斜体" },
   },
   {
     label: "リスト",
-    tip: "箇条書きはスマホで最も読みやすい形式です。要点を絞って提示しましょう",
-    action: { kind: "insert", snippet: "- " },
+    shortcut: "- 項目",
+    tip: "項目を並べるときに使います。選択した複数行にも適用できます。",
+    action: { kind: "line-prefix", prefix: "- ", label: "リスト" },
   },
   {
     label: "引用",
-    tip: "権威ある言葉や、過去の自分の気づきを引用して、説得力を高めましょう",
-    action: { kind: "insert", snippet: "> " },
+    shortcut: "> 引用",
+    tip: "誰かの言葉や補足を引用するときに使います。",
+    action: { kind: "line-prefix", prefix: "> ", label: "引用" },
   },
   {
-    label: "強調",
-    tip: "ここが一番伝えたい核心です。太字で視覚的なフックを作りましょう",
-    action: { kind: "wrap", marker: "**" },
+    label: "リンク",
+    shortcut: "[文字](URL)",
+    tip: "Webページなどのリンクを付けます。選択文字がリンクの表示名になります。",
+    action: { kind: "link", label: "リンク" },
   },
   {
-    label: "区切り",
-    tip: "話題が変わるタイミングで挿入し、読者の脳をリセットさせてあげましょう",
-    action: { kind: "insert", snippet: "\n---\n" },
+    label: "コード",
+    shortcut: "`code`",
+    tip: "短いコードやコマンドを文中で示します。",
+    action: { kind: "wrap", marker: "`", label: "コード" },
   },
 ];
 
 interface EditorToolbarProps {
-  /** ボタン押下時に、その記法の挿入操作を通知する。 */
   onInsert: (action: ToolbarAction) => void;
+  activeHelp: string | null;
+  onHelpChange: (help: string | null) => void;
 }
 
-export function EditorToolbar({ onInsert }: EditorToolbarProps) {
+export function EditorToolbar({ onInsert, activeHelp, onHelpChange }: EditorToolbarProps) {
+  const selected = BUTTONS.find((button) => button.label === activeHelp);
+
   return (
-    <div className="flex flex-wrap gap-2 border-b border-hairline bg-surface p-2.5">
-      {BUTTONS.map(({ label, tip, action }) => (
-        <div key={label} className="group relative">
-          <button
-            type="button"
-            onClick={() => onInsert(action)}
-            className="flex items-center gap-1 rounded-full border border-hairline bg-canvas px-3.5 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent-ink"
-          >
-            {label}
-          </button>
-          {/* ツールチップ: 入力を妨げないよう pointer-events-none。ホバー/フォーカスでふわっと表示。 */}
-          <span
-            role="tooltip"
-            className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-[10px] text-surface opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
-          >
-            {tip}
-          </span>
+    <div className="relative z-20 shrink-0 border-b bg-white">
+      <div className="flex gap-1.5 overflow-x-auto p-2">
+        {BUTTONS.map(({ label, shortcut, tip, action }) => {
+          const isActive = activeHelp === label;
+          return (
+            <div key={label} className="group relative shrink-0">
+              <button
+                type="button"
+                onClick={() => onInsert(action)}
+                onMouseEnter={() => onHelpChange(label)}
+                onMouseLeave={() => onHelpChange(null)}
+                onFocus={() => onHelpChange(label)}
+                onBlur={() => onHelpChange(null)}
+                aria-describedby={`help-${label}`}
+                className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  isActive
+                    ? "border-zinc-800 bg-zinc-800 text-white"
+                    : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 hover:bg-white"
+                }`}
+              >
+                {label}
+              </button>
+              <span
+                id={`help-${label}`}
+                role="tooltip"
+                className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 hidden w-56 -translate-x-1/2 rounded-lg bg-zinc-900 p-3 text-left text-xs text-white shadow-xl group-hover:block group-focus-within:block"
+              >
+                <strong className="block text-zinc-100">{shortcut}</strong>
+                <span className="mt-1 block leading-relaxed text-zinc-300">{tip}</span>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      {selected && (
+        <div className="border-t bg-zinc-50 px-3 py-2 text-xs text-zinc-600">
+          <span className="font-semibold text-zinc-800">{selected.label}</span>
+          <span className="mx-2 text-zinc-300">—</span>
+          {selected.tip}
         </div>
-      ))}
+      )}
     </div>
   );
 }
