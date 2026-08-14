@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>おはなし けいさん | LifeMargin Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F5F3; --card:#FFFFFF; --ink:#31424B; --sub:#7C8B92;
+  --green:#2F8F6B; --green-deep:#227455; --green-soft:#E3F1EA;
+  --blue:#5B7FD4; --blue-deep:#3D5FAE; --blue-soft:#E9EFFB;
+  --cherry:#E8734F; --cherry-deep:#C85A38; --cherry-soft:#FBEDE6;
+  --plus:#2F8F6B; --minus:#5B7FD4;
+  --hl:#FFE9A8; --hl-edge:#E6C868;
+  --r:20px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
+  font-size:17px; line-height:1.7; min-height:100vh;
+}
+.wrap{max-width:600px; margin:0 auto; padding:16px 14px 80px;}
+header{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:4px 4px 10px;}
+h1{font-size:20px; font-weight:800; margin:0;}
+h1 .dot{color:var(--cherry);}
+.count{font-size:13px; color:var(--sub); font-weight:700;}
+.count b{color:var(--green); font-size:17px;}
+
+.seg{display:flex; background:#E2E9E6; border-radius:999px; padding:4px; margin-bottom:12px;}
+.seg button{
+  flex:1; border:0; background:transparent; border-radius:999px;
+  padding:9px 6px; font-family:inherit; font-size:13px; font-weight:800; color:var(--sub); cursor:pointer;
+}
+.seg button.on{background:var(--card); color:var(--green-deep); box-shadow:0 1px 3px rgba(40,60,55,.18);}
+.seg-note{font-size:12px; color:var(--sub); margin:-6px 0 12px 8px;}
+
+.card{background:var(--card); border-radius:var(--r); padding:18px 16px; box-shadow:0 2px 10px rgba(40,60,55,.07); margin-bottom:14px;}
+
+/* story text */
+.story{font-size:20px; font-weight:700; text-align:center; line-height:1.9; margin-bottom:6px;}
+.story .num{
+  display:inline-block; background:var(--hl); border:2px solid var(--hl-edge); border-radius:8px;
+  padding:0 8px; font-weight:800; color:#8A6D12; margin:0 2px;
+}
+.story .key{
+  display:inline-block; border-radius:8px; padding:0 6px; font-weight:800;
+}
+.story .key.up{background:var(--green-soft); color:var(--green-deep);}
+.story .key.down{background:var(--blue-soft); color:var(--blue-deep);}
+
+/* animation stage */
+.stage{display:block; width:100%; max-width:520px; margin:6px auto 0; user-select:none;}
+.replay{
+  display:block; margin:8px auto 0; border:0; background:var(--blue-soft); color:var(--blue-deep);
+  border-radius:999px; padding:7px 16px; font-family:inherit; font-weight:800; font-size:13px; cursor:pointer;
+}
+
+/* decision buttons */
+.ask{text-align:center; font-size:18px; font-weight:800; margin:14px 0 10px;}
+.decide{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.dbtn{
+  border:3px solid #DDE5E1; background:#FBFDFC; border-radius:18px;
+  padding:18px 8px; font-family:inherit; font-size:22px; font-weight:800; cursor:pointer; color:var(--ink);
+}
+.dbtn .big{font-size:40px; display:block; line-height:1;}
+.dbtn.up:active,.dbtn.up.sel{border-color:var(--plus); background:var(--green-soft); color:var(--green-deep);}
+.dbtn.down:active,.dbtn.down.sel{border-color:var(--minus); background:var(--blue-soft); color:var(--blue-deep);}
+.dbtn.ng{border-color:#E5B8A6; background:var(--cherry-soft); animation:shake .3s;}
+@keyframes shake{25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+
+.msg{min-height:28px; text-align:center; font-weight:800; font-size:16px; margin-top:12px; color:var(--sub);}
+.msg.good{color:var(--green-deep);}
+.msg.soft{color:#B07D4F;}
+
+/* calc reveal (after decision) */
+.calc{margin-top:14px; text-align:center; display:none;}
+.calc.show{display:block; animation:fade .4s;}
+@keyframes fade{from{opacity:0; transform:translateY(6px);}}
+.calc .expr{font-size:32px; font-weight:800; letter-spacing:.03em;}
+.calc .expr .op{margin:0 8px;}
+.calc .expr .op.plus{color:var(--plus);}
+.calc .expr .op.minus{color:var(--minus);}
+.ans-choices{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px;}
+.achoice{
+  border:2px solid #DDE5E1; background:#FBFDFC; border-radius:14px;
+  padding:14px 6px; font-family:inherit; font-size:26px; font-weight:800; color:var(--ink); cursor:pointer;
+}
+.achoice:active{background:var(--green-soft);}
+.achoice.ok{border-color:var(--green); background:var(--green-soft); color:var(--green-deep);}
+.achoice.ng{border-color:#E5B8A6; background:var(--cherry-soft);}
+
+.next-btn{
+  width:100%; border:0; border-radius:16px; background:var(--green); color:#fff;
+  font-family:inherit; font-size:19px; font-weight:800; padding:15px; cursor:pointer; margin-top:12px;
+  box-shadow:0 3px 0 var(--green-deep);
+}
+.done-face{text-align:center; font-size:46px;}
+.done-text{text-align:center; font-size:20px; font-weight:800; color:var(--green-deep); margin-bottom:10px;}
+
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} .anim{transition:none !important;} }
+@media (max-width:420px){ .story{font-size:18px;} .dbtn{font-size:19px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>おはなし けいさん<span class="dot">🍎</span></h1>
+    <div class="count">せいかい: <b id="streak">0</b> もん</div>
+  </header>
+
+  <div class="seg" id="seg">
+    <button data-lv="0" class="on">🐢 うごき ゆっくり</button>
+    <button data-lv="1">🚶 ふつう</button>
+    <button data-lv="2">🚀 もじだけ</button>
+  </div>
+  <div class="seg-note">まず「ふえた？へった？」だけ かんがえよう。けいさんは そのあと！</div>
+
+  <div class="card">
+    <div class="story" id="story"></div>
+    <svg id="stage" class="stage" viewBox="0 0 520 200"></svg>
+    <button class="replay" id="replayBtn">▶ もういちど みる</button>
+
+    <div class="ask" id="ask"></div>
+    <div class="decide" id="decide">
+      <button class="dbtn up" data-d="up"><span class="big">➕</span>ふえた</button>
+      <button class="dbtn down" data-d="down"><span class="big">➖</span>へった</button>
+    </div>
+
+    <div class="calc" id="calc">
+      <div class="expr" id="expr"></div>
+      <div class="ans-choices" id="ansChoices"></div>
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function rint(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+
+/* ---------- state ---------- */
+let lv=0, streak=0, P=null, decided=false;
+
+/* ---------- problem templates ----------
+ type: gather(合わせて,+) / add(ふえる,+) / remain(のこり,-) / diff(ちがい,-)
+*/
+const ITEMS=[
+  {e:"🍎", name:"りんご"}, {e:"🐟", name:"さかな"}, {e:"🌰", name:"どんぐり"},
+  {e:"🍓", name:"いちご"}, {e:"🚗", name:"くるま"}, {e:"🐤", name:"ひよこ"},
+  {e:"🍪", name:"クッキー"}, {e:"🎈", name:"ふうせん"}
+];
+
+function makeProblem(){
+  const item=ITEMS[rint(0,ITEMS.length-1)];
+  const type=["gather","add","remain","diff"][rint(0,3)];
+  let a,b,story,ask,op,ans,keyword,kdir;
+  if(type==="gather"){
+    a=rint(2,6); b=rint(2,6);
+    story=['あかい '+item.name+'が <n>'+a+'</n>こ、','あおい '+item.name+'が <n>'+b+'</n>こ あります。','<k up>あわせて</k> なんこ？'];
+    ask="あわせると… ふえる？ へる？";
+    op="+"; ans=a+b; keyword="あわせて"; kdir="up";
+  }else if(type==="add"){
+    a=rint(3,7); b=rint(2,5);
+    story=[item.name+'が <n>'+a+'</n>こ あります。','<k up>'+b+'こ もらいました。</k>','ぜんぶで なんこ？'];
+    ask="もらうと… ふえる？ へる？";
+    op="+"; ans=a+b; keyword="もらった"; kdir="up";
+  }else if(type==="remain"){
+    a=rint(5,9); b=rint(2,a-1);
+    story=[item.name+'が <n>'+a+'</n>こ あります。','<k down>'+b+'こ たべました。</k>','<k down>のこりは</k> なんこ？'];
+    ask="たべると… ふえる？ へる？";
+    op="-"; ans=a-b; keyword="たべた・のこり"; kdir="down";
+  }else{
+    a=rint(5,9); b=rint(2,a-1);
+    const it2=ITEMS[(ITEMS.indexOf(item)+3)%ITEMS.length];
+    story=[item.name+'が <n>'+a+'</n>こ、'+it2.name+'が <n>'+b+'</n>こ。','どちらが <k down>なんこ おおい</k>？'];
+    ask="ちがいを しらべる… ふえる？ へる？";
+    op="-"; ans=a-b; keyword="ちがい"; kdir="down"; P_it2=it2;
+  }
+  return {item, type, a, b, story, ask, op, ans, keyword, kdir, it2:(type==="diff"?ITEMS[(ITEMS.indexOf(item)+3)%ITEMS.length]:null)};
+}
+let P_it2=null;
+
+/* ---------- render story ---------- */
+function renderStory(){
+  let html=P.story.join("<br>");
+  html=html.replace(/<n>(.*?)<\/n>/g,'<span class="num">$1</span>');
+  html=html.replace(/<k up>(.*?)<\/k>/g, lv<=1?'<span class="key up">$1</span>':'$1');
+  html=html.replace(/<k down>(.*?)<\/k>/g, lv<=1?'<span class="key down">$1</span>':'$1');
+  $("#story").innerHTML=html;
+}
+
+/* ---------- animation ---------- */
+let animTimer=[];
+function clearAnim(){ animTimer.forEach(t=>clearTimeout(t)); animTimer=[]; }
+function emojiEl(x,y,ch,size){
+  return '<text x="'+x+'" y="'+y+'" font-size="'+(size||34)+'" text-anchor="middle" dominant-baseline="central">'+ch+'</text>';
+}
+function rowPositions(n, y, x0, x1){
+  const arr=[]; if(n<=0)return arr;
+  const step=Math.min(58,(x1-x0)/Math.max(n,1));
+  const w=step*(n-1); let sx=(x0+x1)/2 - w/2;
+  for(let i=0;i<n;i++) arr.push([sx+i*step, y]);
+  return arr;
+}
+function playAnim(){
+  if(lv===2){ $("#stage").style.display="none"; $("#replayBtn").style.display="none"; return; }
+  $("#stage").style.display="block"; $("#replayBtn").style.display="block";
+  clearAnim();
+  const svg=$("#stage");
+  const dur = lv===0?900:450;
+  const e=P.item.e;
+
+  if(P.type==="gather"){
+    const left=rowPositions(P.a,80,40,240), right=rowPositions(P.b,80,280,480);
+    let html="";
+    left.forEach(p=>html+=emojiEl(p[0],p[1],e));
+    right.forEach(p=>html+=emojiEl(p[0],p[1],e));
+    svg.innerHTML=html;
+    // then merge into one row
+    animTimer.push(setTimeout(()=>{
+      const all=rowPositions(P.a+P.b,150,40,480);
+      let h="";
+      all.forEach(p=>h+=emojiEl(p[0],p[1],e));
+      h+='<text x="260" y="60" font-size="26" text-anchor="middle">🤝</text>';
+      svg.innerHTML=h;
+    }, dur));
+  }else if(P.type==="add"){
+    const base=rowPositions(P.a,120,40,300);
+    let html=""; base.forEach(p=>html+=emojiEl(p[0],p[1],e));
+    svg.innerHTML=html;
+    animTimer.push(setTimeout(()=>{
+      const extra=rowPositions(P.b,120,320,480);
+      let h=""; base.forEach(p=>h+=emojiEl(p[0],p[1],e));
+      extra.forEach(p=>h+=emojiEl(p[0],p[1],e));
+      h+='<text x="310" y="60" font-size="26" text-anchor="middle">👐 ＋'+P.b+'</text>';
+      svg.innerHTML=h;
+    }, dur));
+  }else if(P.type==="remain"){
+    const base=rowPositions(P.a,120,40,480);
+    let html=""; base.forEach(p=>html+=emojiEl(p[0],p[1],e));
+    svg.innerHTML=html;
+    animTimer.push(setTimeout(()=>{
+      let h="";
+      base.forEach((p,i)=>{
+        if(i>=P.a-P.b){ h+=emojiEl(p[0],p[1],"➖",30); }
+        else h+=emojiEl(p[0],p[1],e);
+      });
+      h+='<text x="260" y="60" font-size="24" text-anchor="middle">🍽️ −'+P.b+'</text>';
+      svg.innerHTML=h;
+    }, dur));
+    animTimer.push(setTimeout(()=>{
+      const rem=rowPositions(P.a-P.b,150,40,480);
+      let h=""; rem.forEach(p=>h+=emojiEl(p[0],p[1],e));
+      svg.innerHTML=h;
+    }, dur*2));
+  }else{ // diff — two rows aligned to show the gap
+    const top=rowPositions(P.a,70,40,480);
+    const bot=rowPositions(P.b,150,40, 40+((480-40)*P.b/P.a));
+    let html="";
+    top.forEach(p=>html+=emojiEl(p[0],p[1],P.item.e));
+    bot.forEach(p=>html+=emojiEl(p[0],p[1],P.it2.e));
+    // bracket the difference on the top row
+    const diffStart=top[P.b] ? top[P.b][0]-24 : 40;
+    html+='<rect x="'+diffStart+'" y="46" width="'+(480-diffStart)+'" height="48" fill="none" stroke="#5B7FD4" stroke-width="3" stroke-dasharray="5 4" rx="10"/>';
+    html+='<text x="'+((diffStart+480)/2)+'" y="115" font-size="20" font-weight="800" fill="#3D5FAE" text-anchor="middle" font-family="inherit">この ちがい</text>';
+    svg.innerHTML=html;
+  }
+}
+$("#replayBtn").addEventListener("click",playAnim);
+
+/* ---------- decision ---------- */
+function bindDecide(){
+  decided=false;
+  document.querySelectorAll(".dbtn").forEach(b=>{ b.classList.remove("sel","ng"); b.disabled=false; });
+  document.querySelectorAll(".dbtn").forEach(btn=>{
+    btn.onclick=()=>{
+      if(decided) return;
+      const want=P.op==="+"?"up":"down";
+      if(btn.dataset.d===want){
+        decided=true;
+        btn.classList.add("sel");
+        document.querySelectorAll(".dbtn").forEach(b=>b.disabled=true);
+        $("#msg").textContent = want==="up"?"そう、ふえるね！ ＝ たしざん":"そう、へるね！ ＝ ひきざん";
+        $("#msg").className="msg good";
+        revealCalc();
+      }else{
+        btn.classList.add("ng");
+        const hint = want==="up"
+          ? "「"+P.keyword+"」だから、ものが ふえるよ。もういちど！"
+          : "「"+P.keyword+"」だから、ものが へるよ。もういちど！";
+        $("#msg").textContent=hint; $("#msg").className="msg soft";
+        setTimeout(()=>btn.classList.remove("ng"),350);
+      }
+    };
+  });
+}
+
+/* ---------- calc reveal ---------- */
+function revealCalc(){
+  const opClass=P.op==="+"?"plus":"minus";
+  const big=Math.max(P.a,P.b), small=Math.min(P.a,P.b);
+  const lhs=P.op==="+"?(P.a+" <span class='op "+opClass+"'>＋</span> "+P.b):(big+" <span class='op "+opClass+"'>−</span> "+small);
+  $("#expr").innerHTML=lhs+" <span class='op'>＝</span> ？";
+  const set=new Set([P.ans]);
+  while(set.size<3){ const w=P.ans+rint(-2,2); if(w>=0&&w!==P.ans) set.add(w); }
+  const opts=shuffle([...set]);
+  $("#ansChoices").innerHTML=opts.map(o=>'<button class="achoice" data-v="'+o+'">'+o+"</button>").join("");
+  $("#calc").classList.add("show");
+  document.querySelectorAll(".achoice").forEach(btn=>{
+    btn.onclick=()=>{
+      if(Number(btn.dataset.v)===P.ans){
+        btn.classList.add("ok");
+        document.querySelectorAll(".achoice").forEach(b=>b.disabled=true);
+        streak++; $("#streak").textContent=streak;
+        finish();
+      }else{
+        btn.classList.add("ng"); btn.disabled=true;
+        $("#msg").textContent="おしい！ もういちど かぞえてみて"; $("#msg").className="msg soft";
+      }
+    };
+  });
+}
+
+function finish(){
+  $("#msg").textContent="";
+  const c=$("#calc");
+  c.innerHTML='<div class="done-face">🎉</div>'+
+    '<div class="done-text">'+(P.op==="+"?(P.a+"＋"+P.b):(Math.max(P.a,P.b)+"−"+Math.min(P.a,P.b)))+" ＝ "+P.ans+"</div>"+
+    '<button class="next-btn" id="nextBtn">つぎの おはなし →</button>';
+  c.classList.add("show");
+  $("#nextBtn").onclick=start;
+}
+
+/* ---------- flow ---------- */
+function start(){
+  P=makeProblem();
+  decided=false;
+  $("#msg").textContent=""; $("#msg").className="msg";
+  const calc=$("#calc"); calc.classList.remove("show"); calc.innerHTML='<div class="expr" id="expr"></div><div class="ans-choices" id="ansChoices"></div>';
+  $("#decide").style.display="grid";
+  $("#ask").textContent=P.ask;
+  renderStory();
+  bindDecide();
+  playAnim();
+}
+
+/* ---------- level ---------- */
+document.querySelectorAll("#seg button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    lv=Number(b.dataset.lv);
+    document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));
+    renderStory(); playAnim();
+  });
+});
+
+/* ---------- go ---------- */
+start();
+</script>
+</body>
+</html>

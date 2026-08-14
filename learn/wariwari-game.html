@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>かずの わりわりゲーム | LifeMargin Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F5F3; --card:#FFFFFF; --ink:#31424B; --sub:#7C8B92;
+  --green:#2F8F6B; --green-deep:#227455; --green-soft:#E3F1EA;
+  --blue:#5B7FD4; --blue-deep:#3D5FAE; --blue-soft:#E9EFFB;
+  --cherry:#E8734F; --cherry-deep:#C85A38; --cherry-soft:#FBEDE6;
+  --r:20px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
+  font-size:17px; line-height:1.6; min-height:100vh;
+}
+.wrap{max-width:640px; margin:0 auto; padding:16px 14px 80px;}
+header{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:4px 4px 10px;}
+h1{font-size:20px; font-weight:800; margin:0;}
+h1 .dot{color:var(--cherry);}
+.count{font-size:13px; color:var(--sub); font-weight:700;}
+.count b{color:var(--green); font-size:17px;}
+
+.tabs{display:flex; background:#E2E9E6; border-radius:999px; padding:4px; margin-bottom:12px;}
+.tabs button{
+  flex:1; border:0; background:transparent; border-radius:999px; padding:10px;
+  font-family:inherit; font-size:15px; font-weight:800; color:var(--sub); cursor:pointer;
+}
+.tabs button.on{background:var(--card); color:var(--ink); box-shadow:0 1px 3px rgba(40,60,55,.18);}
+
+/* number chips */
+.chips{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px;}
+.chip{
+  border:2px solid #DDE5E1; background:var(--card); color:var(--ink);
+  width:52px; height:52px; border-radius:50%;
+  font-family:inherit; font-size:24px; font-weight:800; cursor:pointer;
+}
+.chip.on{border-color:var(--cherry); background:var(--cherry-soft); color:var(--cherry-deep);}
+
+.card{background:var(--card); border-radius:var(--r); padding:18px 16px; box-shadow:0 2px 10px rgba(40,60,55,.07); margin-bottom:14px;}
+.mission{text-align:center; font-size:15px; font-weight:800; color:var(--sub); margin-bottom:6px;}
+.big-read{
+  text-align:center; font-size:34px; font-weight:800; min-height:54px; margin-bottom:4px;
+}
+.big-read .l{color:var(--cherry-deep);}
+.big-read .r{color:var(--blue-deep);}
+.stage{display:block; width:100%; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
+.hint-line{text-align:center; color:var(--sub); font-size:13px; font-weight:700; margin-top:2px;}
+
+/* pair collection */
+.pairs{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:12px;}
+.pair{
+  border-radius:12px; padding:5px 12px; font-weight:800; font-size:15px;
+  background:#EDF2F0; color:#A9B7B1; border:2px solid transparent;
+}
+.pair.got{background:var(--green-soft); color:var(--green-deep); border-color:var(--green);}
+.pairs-label{width:100%; text-align:center; font-size:13px; font-weight:800; color:var(--sub);}
+.complete{
+  text-align:center; font-size:18px; font-weight:800; color:var(--green-deep);
+  margin-top:10px; min-height:26px;
+}
+
+/* quiz */
+.q-main{font-size:36px; font-weight:800; text-align:center; margin:2px 0 10px;}
+.q-main .l{color:var(--cherry-deep);}
+.choices{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.choice{
+  border:2px solid #DDE5E1; background:#FBFDFC; border-radius:16px;
+  padding:16px 8px; font-family:inherit; font-size:30px; font-weight:800; color:var(--ink); cursor:pointer;
+}
+.choice:active{background:var(--green-soft);}
+.choice.ok{border-color:var(--green); background:var(--green-soft); color:var(--green-deep);}
+.choice.ng{border-color:#E5B8A6; background:var(--cherry-soft); animation:shake .3s;}
+@keyframes shake{25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.msg{min-height:28px; text-align:center; font-weight:800; font-size:16px; margin-top:10px; color:var(--sub);}
+.msg.good{color:var(--green-deep);}
+.msg.soft{color:#B07D4F;}
+
+.seg{display:flex; background:#E2E9E6; border-radius:999px; padding:4px; margin-bottom:12px;}
+.seg button{
+  flex:1; border:0; background:transparent; border-radius:999px;
+  padding:9px 6px; font-family:inherit; font-size:14px; font-weight:800; color:var(--sub); cursor:pointer;
+}
+.seg button.on{background:var(--card); color:var(--green-deep); box-shadow:0 1px 3px rgba(40,60,55,.18);}
+.seg-note{font-size:12px; color:var(--sub); margin:-6px 0 10px 8px;}
+
+.sprint-btn{
+  display:block; margin:0 auto 12px;
+  border:2px solid var(--blue); color:var(--blue); background:var(--card);
+  border-radius:999px; padding:9px 18px; font-family:inherit; font-weight:800; font-size:14px; cursor:pointer;
+}
+.next-btn{
+  width:100%; border:0; border-radius:16px; background:var(--green); color:#fff;
+  font-family:inherit; font-size:19px; font-weight:800; padding:15px; cursor:pointer; margin-top:8px;
+  box-shadow:0 3px 0 var(--green-deep);
+}
+.ghost-btn{
+  width:100%; border:2px solid #D5DEDA; border-radius:16px; background:var(--card); color:var(--sub);
+  font-family:inherit; font-size:15px; font-weight:800; padding:12px; cursor:pointer; margin-top:10px;
+}
+.done-face{text-align:center; font-size:50px; margin:4px 0;}
+.done-text{text-align:center; font-size:22px; font-weight:800; color:var(--green-deep); margin-bottom:12px;}
+
+/* sprint overlay */
+.overlay{
+  position:fixed; inset:0; background:rgba(38,52,48,.45); display:none;
+  align-items:flex-start; justify-content:center; padding:24px 14px; z-index:50; overflow:auto;
+}
+.overlay.show{display:flex;}
+.sprint-card{background:var(--card); border-radius:var(--r); padding:20px 18px; width:100%; max-width:520px;}
+.sprint-head{display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:10px;}
+.sprint-time{font-size:26px; color:var(--blue);}
+.sprint-q{font-size:30px; font-weight:800; text-align:center; margin:14px 0;}
+.close-x{border:0; background:transparent; font-size:22px; cursor:pointer; color:var(--sub); font-weight:800;}
+
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+@media (max-width:420px){ .big-read{font-size:28px;} .q-main{font-size:30px;} .choice{font-size:26px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>かずの わりわりゲーム<span class="dot">✂️</span></h1>
+    <div class="count">せいかい: <b id="streak">0</b> かい</div>
+  </header>
+
+  <div class="tabs">
+    <button id="tabFree" class="on">👆 わりわりする</button>
+    <button id="tabQuiz">🎯 クイズ</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div id="freePane">
+    <div class="card">
+      <div class="mission">たまの あいだを タップして わってみよう</div>
+      <div class="big-read" id="freeRead"></div>
+      <svg id="freeStage" class="stage" viewBox="0 0 640 120"></svg>
+      <div class="hint-line">もういちど おなじ ところを タップすると くっつくよ</div>
+      <div class="pairs" id="pairs"></div>
+      <div class="complete" id="complete"></div>
+    </div>
+  </div>
+
+  <div id="quizPane" style="display:none">
+    <div class="seg" id="seg">
+      <button data-lv="0" class="on">🐢 ゆっくり</button>
+      <button data-lv="1">🚶 ふつう</button>
+      <button data-lv="2">🚀 じぶんで</button>
+    </div>
+    <div class="seg-note">🐢=ぜんぶ みえる ／ 🚶=かくれんぼ ／ 🚀=あたまの なかで</div>
+    <button class="sprint-btn" id="sprintOpen">⚡ わりわりスプリント（60びょう）</button>
+    <div class="card">
+      <div class="q-main" id="qMain"></div>
+      <svg id="quizStage" class="stage" viewBox="0 0 640 120"></svg>
+      <div id="quizChoices"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sprint-card">
+    <div class="sprint-head">
+      <span>⚡ わりわりスプリント</span>
+      <button class="close-x" id="sprintClose">✕</button>
+    </div>
+    <div id="sprintBody"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function rint(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+
+/* ---------- state ---------- */
+let N=5;                       // current target number (5..10)
+let splitAt=0;                 // 0 = no split, else 1..N-1
+let collected={};              // {N: Set of split positions}
+let mode="free";
+let level=0, streak=0;
+let Q=null;                    // quiz question {n,l,r}
+
+/* ---------- number chips ---------- */
+function drawChips(){
+  $("#chips").innerHTML=[5,6,7,8,9,10].map(n=>
+    '<button class="chip'+(n===N?" on":"")+'" data-n="'+n+'">'+n+"</button>").join("");
+  document.querySelectorAll(".chip").forEach(c=>{
+    c.addEventListener("click",()=>{
+      N=Number(c.dataset.n); splitAt=0;
+      drawChips();
+      if(mode==="free"){ drawFree(); } else { newQuiz(); }
+    });
+  });
+}
+
+/* ---------- free mode: tap gaps to split ---------- */
+function dotRow(svgW, n, opts){
+  // returns svg string of n dots centered, with optional split gap and colors
+  const r=20, gapW=(opts&&opts.split)?46:0;
+  const baseGap=10;
+  const totalW=n*r*2+(n-1)*baseGap+gapW;
+  let x=(svgW-totalW)/2+r;
+  const cy=62;
+  let html="", centers=[];
+  for(let i=0;i<n;i++){
+    if(opts&&opts.split&&i===opts.split){ x+=gapW; }
+    let fill="#5B7FD4";
+    if(opts&&opts.split&&i<opts.split) fill="#E8734F";
+    if(opts&&opts.cherry!=null&&i<opts.cherry) fill="#E8734F";
+    if(opts&&opts.outline!=null&&i>=opts.outline){
+      html+='<circle cx="'+x+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#5B7FD4" stroke-width="3" stroke-dasharray="4 4"/>';
+    }else{
+      html+='<circle cx="'+x+'" cy="'+cy+'" r="'+r+'" fill="'+fill+'"/>';
+    }
+    centers.push(x);
+    x+=r*2+baseGap;
+  }
+  return {html, centers, cy, r};
+}
+function drawFree(){
+  const svg=$("#freeStage");
+  const row=dotRow(640,N, splitAt?{split:splitAt}:null);
+  let html=row.html;
+  // gap tap zones (between dot i-1 and dot i) -> split position i
+  for(let i=1;i<N;i++){
+    const gx=(row.centers[i-1]+row.centers[i])/2;
+    html+='<rect x="'+(gx-18)+'" y="20" width="36" height="86" fill="transparent" data-g="'+i+'" style="cursor:pointer"/>';
+    if(splitAt!==i){
+      html+='<line x1="'+gx+'" y1="34" x2="'+gx+'" y2="90" stroke="#DDE5E1" stroke-width="2" stroke-dasharray="3 5" pointer-events="none"/>';
+    }
+  }
+  if(splitAt){
+    const gx=(row.centers[splitAt-1]+row.centers[splitAt])/2;
+    html+='<text x="'+gx+'" y="30" font-size="22" text-anchor="middle" pointer-events="none">✂️</text>';
+  }
+  svg.innerHTML=html;
+  svg.querySelectorAll("rect[data-g]").forEach(z=>{
+    z.addEventListener("click",()=>{
+      const g=Number(z.dataset.g);
+      splitAt=(splitAt===g)?0:g;
+      if(splitAt){
+        if(!collected[N]) collected[N]=new Set();
+        collected[N].add(splitAt);
+      }
+      drawFree();
+    });
+  });
+  $("#freeRead").innerHTML = splitAt
+    ? N+"は <span class='l'>"+splitAt+"</span>と <span class='r'>"+(N-splitAt)+"</span>"
+    : "<span style='color:var(--sub);font-size:22px'>"+N+"この たまが ならんでるよ</span>";
+  drawPairs();
+}
+function drawPairs(){
+  const got=collected[N]||new Set();
+  let html='<span class="pairs-label">'+N+'の わりかたを ぜんぶ みつけよう！</span>';
+  for(let i=1;i<N;i++){
+    html+='<span class="pair'+(got.has(i)?" got":"")+'">'+i+"と"+(N-i)+"</span>";
+  }
+  $("#pairs").innerHTML=html;
+  $("#complete").textContent = got.size===N-1 ? "🎉 "+N+"の わりかた コンプリート！" : "";
+}
+
+/* ---------- quiz mode ---------- */
+function newQuiz(){
+  const l=rint(1,N-1);
+  Q={n:N, l, r:N-l};
+  $("#qMain").innerHTML=N+"は <span class='l'>"+l+"</span>と いくつ？";
+  const svg=$("#quizStage");
+  if(level===0){
+    // all visible: l cherry filled, r blue outlines (countable)
+    const row=dotRow(640,N,{cherry:l, outline:l});
+    svg.innerHTML=row.html;
+    svg.style.display="block";
+  }else if(level===1){
+    // hide the rest under a cover
+    const row=dotRow(640,N,{cherry:l, outline:l});
+    let html=row.html;
+    // cover rect over outline dots
+    if(l<N){
+      const x1=row.centers[l]-26, x2=row.centers[N-1]+26;
+      html+='<rect x="'+x1+'" y="'+(row.cy-30)+'" width="'+(x2-x1)+'" height="60" rx="12" fill="#EDE4C8" stroke="#CDC3A4" stroke-width="2"/>';
+      html+='<text x="'+((x1+x2)/2)+'" y="'+(row.cy+7)+'" font-size="18" font-weight="800" fill="#8B7F5A" text-anchor="middle" font-family="inherit">かくれんぼ 🙈</text>';
+    }
+    svg.innerHTML=html;
+    svg.style.display="block";
+  }else{
+    svg.style.display="none";
+  }
+  const set=new Set([Q.r]);
+  while(set.size<3){ const w=Q.r+rint(-2,2); if(w>=0&&w<=10&&w!==Q.r) set.add(w); }
+  const opts=shuffle([...set]);
+  $("#quizChoices").innerHTML=
+    '<div class="choices">'+opts.map(o=>'<button class="choice" data-v="'+o+'">'+o+"</button>").join("")+'</div><div class="msg" id="msg"></div>';
+  document.querySelectorAll("#quizChoices .choice").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(Number(btn.dataset.v)===Q.r){
+        btn.classList.add("ok");
+        streak++; $("#streak").textContent=streak;
+        $("#msg").textContent=N+"は "+Q.l+"と "+Q.r+"！"; $("#msg").className="msg good";
+        document.querySelectorAll("#quizChoices .choice").forEach(b=>b.disabled=true);
+        setTimeout(newQuiz,900);
+      }else{
+        btn.classList.add("ng"); btn.disabled=true;
+        $("#msg").textContent="おしい！ たまを かぞえてみて"; $("#msg").className="msg soft";
+      }
+    });
+  });
+}
+
+/* ---------- tabs & levels ---------- */
+$("#tabFree").addEventListener("click",()=>setMode("free"));
+$("#tabQuiz").addEventListener("click",()=>setMode("quiz"));
+function setMode(m){
+  mode=m;
+  $("#tabFree").classList.toggle("on",m==="free");
+  $("#tabQuiz").classList.toggle("on",m==="quiz");
+  $("#freePane").style.display=m==="free"?"block":"none";
+  $("#quizPane").style.display=m==="quiz"?"block":"none";
+  if(m==="free") drawFree(); else newQuiz();
+}
+document.querySelectorAll("#seg button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    level=Number(b.dataset.lv);
+    document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));
+    newQuiz();
+  });
+});
+
+/* ---------- sprint ---------- */
+let spTimer=null, spLeft=60, spScore=0;
+$("#sprintOpen").addEventListener("click",()=>{ $("#overlay").classList.add("show"); startSprint(); });
+$("#sprintClose").addEventListener("click",closeSprint);
+function closeSprint(){ $("#overlay").classList.remove("show"); clearInterval(spTimer); }
+function startSprint(){
+  spLeft=60; spScore=0; clearInterval(spTimer);
+  spTimer=setInterval(()=>{
+    spLeft--; const t=$("#spTime"); if(t)t.textContent=spLeft;
+    if(spLeft<=0){ clearInterval(spTimer); endSprint(); }
+  },1000);
+  sprintQ();
+}
+function sprintQ(){
+  const n=rint(5,10), l=rint(1,n-1), r=n-l;
+  const set=new Set([r]);
+  while(set.size<3){ const w=r+rint(-2,2); if(w>=0&&w<=10&&w!==r) set.add(w); }
+  const opts=shuffle([...set]);
+  $("#sprintBody").innerHTML=
+    '<div class="sprint-head"><span>せいかい: <b style="color:var(--green)">'+spScore+'</b></span><span class="sprint-time" id="spTime">'+spLeft+"</span></div>"+
+    '<div class="sprint-q">'+n+"は <b style='color:var(--cherry-deep)'>"+l+"</b>と いくつ？</div>"+
+    '<div class="choices">'+opts.map(o=>'<button class="choice" data-v="'+o+'">'+o+"</button>").join("")+"</div>";
+  document.querySelectorAll("#sprintBody .choice").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(Number(btn.dataset.v)===r){ spScore++; sprintQ(); }
+      else{ btn.classList.add("ng"); btn.disabled=true; }
+    });
+  });
+}
+function endSprint(){
+  $("#sprintBody").innerHTML=
+    '<div class="done-face">⚡</div>'+
+    '<div class="done-text">'+spScore+' もん せいかい！</div>'+
+    '<p style="text-align:center;color:var(--sub);font-weight:700">わりわりが はやくなると、たしざんも ひきざんも ラクになるよ</p>'+
+    '<button class="next-btn" id="spAgain">もういちど</button>'+
+    '<button class="ghost-btn" id="spEnd">おわる</button>';
+  $("#spAgain").addEventListener("click",startSprint);
+  $("#spEnd").addEventListener("click",closeSprint);
+}
+
+/* ---------- go ---------- */
+drawChips();
+drawFree();
+</script>
+</body>
+</html>

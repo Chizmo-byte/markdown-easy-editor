@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>スライダーじょうぎ | LifeMargin Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F5F3; --card:#FFFFFF; --ink:#31424B; --sub:#7C8B92;
+  --cm:#4A72C4; --cm-soft:#E7EEFB; --cm-soft2:#D3E0F7;
+  --mm:#2F8F6B; --mm-soft:#E3F1EA; --mm-deep:#227455;
+  --r:20px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
+  min-height:100vh; font-size:17px;
+}
+.wrap{max-width:760px; margin:0 auto; padding:16px 14px 60px;}
+header{display:flex; align-items:baseline; justify-content:space-between; padding:4px 4px 12px;}
+h1{font-size:20px; font-weight:800; margin:0;}
+h1 .dot{color:var(--mm);}
+.streak{font-size:13px; color:var(--sub); font-weight:700;}
+.streak b{color:var(--mm); font-size:17px;}
+
+.tabs{display:flex; background:#E2E9E6; border-radius:999px; padding:4px; margin-bottom:14px;}
+.tabs button{
+  flex:1; border:0; background:transparent; border-radius:999px; padding:10px;
+  font-family:inherit; font-size:15px; font-weight:800; color:var(--sub); cursor:pointer;
+}
+.tabs button.on{background:var(--card); color:var(--ink); box-shadow:0 1px 3px rgba(40,60,55,.18);}
+
+.card{background:var(--card); border-radius:var(--r); padding:18px 16px; box-shadow:0 2px 10px rgba(40,60,55,.07);}
+
+/* mission / prompt */
+.mission{
+  text-align:center; font-size:15px; font-weight:800; color:var(--sub);
+  letter-spacing:.06em; margin-bottom:6px;
+}
+.target{
+  text-align:center; font-size:30px; font-weight:800; margin-bottom:10px; min-height:46px;
+}
+.pill{display:inline-block; border-radius:12px; padding:2px 14px; margin:0 3px;}
+.pill.cm{background:var(--cm-soft); color:var(--cm);}
+.pill.mm{background:var(--mm-soft); color:var(--mm-deep);}
+
+/* live readout */
+.readout{
+  display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;
+  font-size:34px; font-weight:800; margin:4px 0 6px; min-height:56px;
+}
+.readout .eq{color:var(--sub); font-size:24px;}
+.readout .unit{font-size:20px; margin-left:2px;}
+.hidden-unit{
+  font-size:15px; color:#B9A24C; background:#FFF6D8; border-radius:12px; padding:4px 12px; font-weight:800;
+}
+
+/* svg ruler */
+.stage{touch-action:none; user-select:none; -webkit-user-select:none; outline:none; display:block; width:100%;}
+.stage:focus-visible{outline:3px solid var(--cm); outline-offset:4px; border-radius:12px;}
+.hint-line{text-align:center; color:var(--sub); font-size:13px; font-weight:700; margin-top:4px;}
+
+.check-btn{
+  width:100%; border:0; border-radius:16px; background:var(--mm); color:#fff;
+  font-family:inherit; font-size:19px; font-weight:800; padding:15px; cursor:pointer; margin-top:12px;
+  box-shadow:0 3px 0 var(--mm-deep);
+}
+.msg{min-height:30px; text-align:center; font-weight:800; font-size:17px; margin-top:10px; color:var(--sub);}
+.msg.good{color:var(--mm-deep);}
+.msg.soft{color:#B07D4F;}
+
+.legend{
+  display:flex; justify-content:center; gap:14px; margin-top:10px;
+  font-size:13px; font-weight:800; color:var(--sub); flex-wrap:wrap;
+}
+.legend span{display:flex; align-items:center; gap:5px;}
+.sw{width:14px; height:14px; border-radius:4px; display:inline-block;}
+
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+@media (max-width:480px){ .readout{font-size:28px;} .target{font-size:25px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>スライダーじょうぎ<span class="dot">.</span></h1>
+    <div class="streak">ピッタリ: <b id="streak">0</b> かい</div>
+  </header>
+
+  <div class="tabs">
+    <button id="tabFree" class="on">👆 さわってみる</button>
+    <button id="tabQuiz">🎯 クイズ</button>
+  </div>
+
+  <div class="card">
+    <div class="mission" id="mission">じょうぎの ▲ を ゆびで うごかしてみよう</div>
+    <div class="target" id="target"></div>
+    <div class="readout" id="readout"></div>
+
+    <svg id="stage" class="stage" viewBox="0 0 1040 268" tabindex="0" aria-label="スライダーじょうぎ。矢印キーでも動かせます。">
+      <!-- ruler face -->
+      <rect x="40" y="56" width="960" height="104" rx="10" fill="#FFFFFF" stroke="#C7D2CC" stroke-width="2"/>
+      <g id="ticks"></g>
+      <!-- guide line through ruler -->
+      <line id="guide" x1="60" y1="50" x2="60" y2="238" stroke="#E8734F" stroke-width="3" stroke-dasharray="5 4"/>
+      <!-- measured ribbon: cm bundles + mm remainder -->
+      <g id="ribbon"></g>
+      <rect x="40" y="196" width="960" height="30" rx="8" fill="none" stroke="#DCE4E0" stroke-width="2"/>
+      <!-- handle -->
+      <g id="handle" style="cursor:grab">
+        <circle cx="60" cy="243" r="0" fill="transparent"/>
+        <path id="handleTri" d="M 60 232 l -16 24 h 32 z" fill="#E8734F" stroke="#C85A38" stroke-width="2" stroke-linejoin="round"/>
+      </g>
+    </svg>
+    <div class="hint-line">▲を ドラッグ ／ キーボードの ←→ でも 1mmずつ うごくよ</div>
+
+    <button class="check-btn" id="checkBtn" style="display:none">これで ピッタリ！</button>
+    <div class="msg" id="msg"></div>
+
+    <div class="legend">
+      <span><span class="sw" style="background:var(--cm-soft2)"></span>10mmの たば ＝ 1cm</span>
+      <span><span class="sw" style="background:var(--mm)"></span>のこりの mm</span>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const X0=60, PX_PER_MM=9.2, MAX_MM=100;
+const svg=$("#stage");
+let mm=37;                 // current position
+let mode="free";           // free | quiz
+let quiz=null;             // {mm, style}
+let streak=0;
+
+/* ---------- draw ticks once ---------- */
+(function drawTicks(){
+  const g=$("#ticks");
+  let html="";
+  for(let m=0;m<=MAX_MM;m++){
+    const x=X0+m*PX_PER_MM;
+    let len=18, w=1.6, col="#9AACA4";
+    if(m%10===0){ len=46; w=3; col="#5A6E77"; }
+    else if(m%5===0){ len=30; w=2.2; col="#7A8E96"; }
+    html+='<line x1="'+x+'" y1="58" x2="'+x+'" y2="'+(58+len)+'" stroke="'+col+'" stroke-width="'+w+'"/>';
+    if(m%10===0){
+      html+='<text x="'+x+'" y="140" font-size="26" font-weight="800" fill="#4A72C4" text-anchor="middle" font-family="inherit">'+(m/10)+"</text>";
+    }
+  }
+  html+='<text x="'+(X0+MAX_MM*PX_PER_MM-4)+'" y="152" font-size="15" font-weight="700" fill="#8A99A0" text-anchor="end">cm</text>';
+  g.innerHTML=html;
+})();
+
+/* ---------- rendering ---------- */
+function ribbonHtml(){
+  const fullCm=Math.floor(mm/10), rest=mm%10;
+  let html="";
+  for(let c=0;c<fullCm;c++){
+    const x=X0+c*10*PX_PER_MM;
+    html+='<rect x="'+x+'" y="198" width="'+(10*PX_PER_MM)+'" height="26" fill="'+(c%2? "#D3E0F7":"#E7EEFB")+'"/>';
+    html+='<text x="'+(x+10*PX_PER_MM/2)+'" y="217" font-size="15" font-weight="800" fill="#4A72C4" text-anchor="middle">1cm</text>';
+  }
+  if(rest>0){
+    const x=X0+fullCm*10*PX_PER_MM;
+    html+='<rect x="'+x+'" y="198" width="'+(rest*PX_PER_MM)+'" height="26" fill="#2F8F6B"/>';
+    if(rest>=2){
+      html+='<text x="'+(x+rest*PX_PER_MM/2)+'" y="217" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">'+rest+"</text>";
+    }
+  }
+  return html;
+}
+function render(){
+  const x=X0+mm*PX_PER_MM;
+  $("#guide").setAttribute("x1",x); $("#guide").setAttribute("x2",x);
+  $("#handleTri").setAttribute("d","M "+x+" 232 l -16 24 h 32 z");
+  $("#ribbon").innerHTML=ribbonHtml();
+
+  const cm=Math.floor(mm/10), rest=mm%10;
+  const cmPill='<span class="pill cm">'+cm+'<span class="unit">cm</span></span>'+
+               (rest>0?'<span class="pill mm">'+rest+'<span class="unit">mm</span></span>':'');
+  const mmPill='<span class="pill mm">'+mm+'<span class="unit">mm</span></span>';
+  const ro=$("#readout");
+  if(mode==="free"){
+    ro.innerHTML=cmPill+'<span class="eq">=</span>'+mmPill;
+  }else if(quiz.style==="toMM"){
+    // target was given in mm → show only cm+mm so the link is practiced
+    ro.innerHTML=cmPill+'<span class="eq">=</span><span class="hidden-unit">mmは ないしょ 🤫</span>';
+  }else{
+    ro.innerHTML='<span class="hidden-unit">cmは ないしょ 🤫</span><span class="eq">=</span>'+mmPill;
+  }
+}
+
+/* ---------- pointer drag ---------- */
+function clientToMm(clientX){
+  const rect=svg.getBoundingClientRect();
+  const scale=1040/rect.width;
+  const vx=(clientX-rect.left)*scale;
+  return Math.max(0,Math.min(MAX_MM,Math.round((vx-X0)/PX_PER_MM)));
+}
+let dragging=false;
+svg.addEventListener("pointerdown",e=>{
+  dragging=true; svg.setPointerCapture(e.pointerId);
+  mm=clientToMm(e.clientX); render();
+});
+svg.addEventListener("pointermove",e=>{ if(dragging){ mm=clientToMm(e.clientX); render(); } });
+svg.addEventListener("pointerup",()=>dragging=false);
+svg.addEventListener("pointercancel",()=>dragging=false);
+svg.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"){ mm=Math.min(MAX_MM,mm+1); render(); e.preventDefault(); }
+  if(e.key==="ArrowLeft"){ mm=Math.max(0,mm-1); render(); e.preventDefault(); }
+});
+
+/* ---------- modes ---------- */
+$("#tabFree").addEventListener("click",()=>setMode("free"));
+$("#tabQuiz").addEventListener("click",()=>setMode("quiz"));
+function setMode(m){
+  mode=m;
+  $("#tabFree").classList.toggle("on",m==="free");
+  $("#tabQuiz").classList.toggle("on",m==="quiz");
+  $("#msg").textContent=""; $("#msg").className="msg";
+  if(m==="free"){
+    $("#mission").textContent="じょうぎの ▲ を ゆびで うごかしてみよう";
+    $("#target").innerHTML="";
+    $("#checkBtn").style.display="none";
+    render();
+  }else{
+    newQuiz();
+  }
+}
+function newQuiz(){
+  const t=Math.floor(Math.random()*96)+5;   // 5..100 mm
+  const style=Math.random()<0.5?"toMM":"toCM";
+  quiz={mm:t, style};
+  $("#mission").textContent="▲を うごかして あわせよう";
+  if(style==="toMM"){
+    $("#target").innerHTML='<span class="pill mm">'+t+'<span class="unit">mm</span></span> に あわせてね';
+  }else{
+    const c=Math.floor(t/10), r=t%10;
+    $("#target").innerHTML='<span class="pill cm">'+c+'<span class="unit">cm</span></span>'+
+      (r>0?'<span class="pill mm">'+r+'<span class="unit">mm</span></span>':'<span style="font-size:20px">ちょうど</span>')+" に あわせてね";
+  }
+  $("#checkBtn").style.display="block";
+  $("#msg").textContent=""; $("#msg").className="msg";
+  render();
+}
+$("#checkBtn").addEventListener("click",()=>{
+  if(mode!=="quiz")return;
+  const msg=$("#msg");
+  if(mm===quiz.mm){
+    streak++; $("#streak").textContent=streak;
+    const c=Math.floor(mm/10), r=mm%10;
+    msg.innerHTML="🎉 ピッタリ！ "+c+"cm"+(r>0?r+"mm":"")+" ＝ "+mm+"mm だね";
+    msg.className="msg good";
+    setTimeout(newQuiz,1600);
+  }else{
+    const diff=quiz.mm-mm;
+    msg.textContent="おしい！ あと "+Math.abs(diff)+"mm "+(diff>0?"みぎ →":"← ひだり")+" だよ";
+    msg.className="msg soft";
+  }
+});
+
+/* ---------- go ---------- */
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>小数のけいさんサポーター | LifeMargin Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F5F3; --card:#FFFFFF; --ink:#31424B; --sub:#7C8B92;
+  --green:#2F8F6B; --green-deep:#227455; --green-soft:#E3F1EA;
+  --blue:#5B7FD4; --blue-soft:#E9EFFB;
+  --note:#FFF8DE; --note-edge:#EBDCA6; --note-ink:#7E651F;
+  --peach:#F6E9E2;
+  --r:20px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
+  font-size:17px; line-height:1.6;
+  min-height:100vh;
+}
+.wrap{max-width:640px; margin:0 auto; padding:16px 14px 90px;}
+header{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:4px 4px 10px;}
+h1{font-size:20px; font-weight:800; margin:0; letter-spacing:.02em;}
+h1 .dot{color:var(--green);}
+.count{font-size:13px; color:var(--sub); font-weight:700;}
+.count b{color:var(--green); font-size:17px;}
+
+/* support level segmented control */
+.mode-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;}
+.seg{display:flex; background:#E2E9E6; border-radius:999px; padding:4px; flex:1; min-width:230px;}
+.seg button{
+  flex:1; border:0; background:transparent; border-radius:999px;
+  padding:9px 6px; font-family:inherit; font-size:14px; font-weight:800; color:var(--sub);
+  cursor:pointer; transition:background .15s,color .15s;
+}
+.seg button.on{background:var(--card); color:var(--green-deep); box-shadow:0 1px 3px rgba(40,60,55,.18);}
+.seg-note{width:100%; font-size:12px; color:var(--sub); margin:-6px 0 0 8px;}
+.sprint-btn{
+  border:2px solid var(--blue); color:var(--blue); background:var(--card);
+  border-radius:999px; padding:9px 16px; font-family:inherit; font-weight:800; font-size:14px; cursor:pointer;
+}
+
+/* memory shelf — the tool holds it so the kid doesn't have to */
+.shelf{
+  background:linear-gradient(#EAE3CF,#E4DCC4); border-radius:var(--r);
+  padding:12px 12px 14px; margin-bottom:14px; min-height:74px;
+  border-bottom:6px solid #CDC3A4;
+}
+.shelf-label{font-size:12px; font-weight:800; color:#8B7F5A; letter-spacing:.12em; margin:0 0 8px 4px;}
+.notes{display:flex; flex-wrap:wrap; gap:8px;}
+.note{
+  background:var(--note); border:1px solid var(--note-edge); color:var(--note-ink);
+  border-radius:6px; padding:7px 12px; font-weight:800; font-size:16px;
+  box-shadow:1px 2px 3px rgba(90,75,30,.18); transform:rotate(-1deg);
+}
+.note:nth-child(even){transform:rotate(1.2deg);}
+.note small{display:block; font-size:11px; font-weight:700; opacity:.75;}
+.note.pop{animation:pop .3s ease;}
+@keyframes pop{from{transform:scale(.6) rotate(-4deg); opacity:0;}}
+.shelf-empty{color:#A99C74; font-size:13px; font-weight:700; padding:6px 4px;}
+
+/* problem card */
+.card{background:var(--card); border-radius:var(--r); padding:20px 18px; box-shadow:0 2px 10px rgba(40,60,55,.07); margin-bottom:14px;}
+.q-label{font-size:13px; font-weight:800; color:var(--sub); letter-spacing:.1em;}
+.q-main{font-size:40px; font-weight:800; text-align:center; letter-spacing:.04em; margin:8px 0 2px;}
+.q-main .op{color:var(--green); margin:0 6px;}
+
+/* step card */
+.step-title{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+.step-num{
+  background:var(--green); color:#fff; font-weight:800; font-size:14px;
+  width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none;
+}
+.step-title h2{font-size:17px; font-weight:800; margin:0;}
+.choices{display:grid; gap:10px;}
+.choice{
+  border:2px solid #DDE5E1; background:#FBFDFC; border-radius:14px;
+  padding:14px 12px; font-family:inherit; font-size:24px; font-weight:800; color:var(--ink);
+  cursor:pointer; transition:border-color .12s, background .12s;
+}
+.choice:active{background:var(--green-soft);}
+.choice.ok{border-color:var(--green); background:var(--green-soft); color:var(--green-deep);}
+.choice.ng{border-color:#E5B8A6; background:var(--peach); animation:shake .3s;}
+@keyframes shake{25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.msg{min-height:26px; text-align:center; font-weight:800; font-size:15px; margin-top:10px; color:var(--sub);}
+.msg.good{color:var(--green-deep);}
+.msg.soft{color:#B07D4F;}
+
+.hint-btn{
+  border:0; background:var(--blue-soft); color:var(--blue); border-radius:999px;
+  padding:8px 16px; font-family:inherit; font-weight:800; font-size:14px; cursor:pointer; margin-top:12px;
+}
+.hint-box{
+  background:var(--blue-soft); border-radius:12px; padding:12px 14px; margin-top:10px;
+  font-weight:700; font-size:16px; color:#3D5FAE;
+}
+.hint-box .tt{display:grid; grid-template-columns:repeat(3,1fr); gap:4px 10px; font-size:15px; margin-top:4px;}
+
+/* answer display + keypad */
+.ans-view{
+  background:#F4F8F6; border:2px dashed #C9D8D1; border-radius:14px;
+  min-height:64px; display:flex; align-items:center; justify-content:center;
+  font-size:36px; font-weight:800; letter-spacing:.06em; margin-bottom:12px; color:var(--green-deep);
+}
+.pad{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+.pad button{
+  border:0; border-radius:14px; background:#EDF2F0; color:var(--ink);
+  font-family:inherit; font-size:24px; font-weight:800; padding:14px 0; cursor:pointer;
+}
+.pad button:active{background:#DCE7E2;}
+.pad .go{grid-row:span 2; background:var(--green); color:#fff; font-size:20px;}
+.pad .del{background:#F3E9E4; color:#B07D4F; font-size:20px;}
+
+.next-btn{
+  width:100%; border:0; border-radius:16px; background:var(--green); color:#fff;
+  font-family:inherit; font-size:19px; font-weight:800; padding:16px; cursor:pointer; margin-top:6px;
+  box-shadow:0 3px 0 var(--green-deep);
+}
+.ghost-btn{
+  width:100%; border:2px solid #D5DEDA; border-radius:16px; background:var(--card); color:var(--sub);
+  font-family:inherit; font-size:15px; font-weight:800; padding:12px; cursor:pointer; margin-top:10px;
+}
+.done-face{text-align:center; font-size:52px; margin:4px 0;}
+.done-text{text-align:center; font-size:22px; font-weight:800; color:var(--green-deep); margin-bottom:14px;}
+
+/* sprint overlay */
+.overlay{
+  position:fixed; inset:0; background:rgba(38,52,48,.45); display:none;
+  align-items:flex-start; justify-content:center; padding:24px 14px; z-index:50; overflow:auto;
+}
+.overlay.show{display:flex;}
+.sprint-card{background:var(--card); border-radius:var(--r); padding:20px 18px; width:100%; max-width:520px;}
+.sprint-head{display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:10px;}
+.sprint-time{font-size:26px; color:var(--blue);}
+.sprint-q{font-size:30px; font-weight:800; text-align:center; margin:14px 0;}
+.close-x{border:0; background:transparent; font-size:22px; cursor:pointer; color:var(--sub); font-weight:800;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+@media (max-width:420px){
+  .q-main{font-size:33px;}
+  .choice{font-size:21px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>小数のけいさんサポーター<span class="dot">.</span></h1>
+    <div class="count">きょう とけた: <b id="solved">0</b> 問</div>
+  </header>
+
+  <div class="mode-row">
+    <div class="seg" id="seg">
+      <button data-lv="0" class="on">🐢 ゆっくり</button>
+      <button data-lv="1">🚶 ふつう</button>
+      <button data-lv="2">🚀 じぶんで</button>
+    </div>
+    <button class="sprint-btn" id="sprintOpen">⚡ 小数点スプリント</button>
+    <div class="seg-note">きょうの ちょうしに あわせて えらんでね。とちゅうで かえてもOK！</div>
+  </div>
+
+  <div class="shelf">
+    <p class="shelf-label">📌 メモだな — おぼえておくのは この子の しごと</p>
+    <div class="notes" id="notes"><div class="shelf-empty">まだ なにも のってないよ</div></div>
+  </div>
+
+  <div class="card">
+    <span class="q-label">もんだい</span>
+    <div class="q-main" id="qMain"></div>
+  </div>
+
+  <div class="card" id="stepCard"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sprint-card">
+    <div class="sprint-head">
+      <span>⚡ 小数点スプリント（60びょう）</span>
+      <button class="close-x" id="sprintClose">✕</button>
+    </div>
+    <div id="sprintBody"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ---------- utilities ---------- */
+const $=s=>document.querySelector(s);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function rint(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function pick(arr){return arr[rint(0,arr.length-1)];}
+
+/* shift decimal point of an integer string: intVal / 10^shift, trimmed */
+function shiftStr(intVal, shift){
+  let s=String(intVal);
+  if(shift<=0) return s + "0".repeat(-shift);
+  while(s.length<=shift) s="0"+s;
+  let out=s.slice(0,s.length-shift)+"."+s.slice(s.length-shift);
+  out=out.replace(/\.?0+$/,"");
+  return out;
+}
+function fmtNum(n){ // safe for values like 1.5, 6
+  return parseFloat(n.toFixed(4)).toString();
+}
+
+/* ---------- state ---------- */
+let level=0;            // 0 slow / 1 normal / 2 self
+let solved=0;
+let P=null;             // current problem
+let stepIdx=0;
+let wrongInSelf=0;
+
+/* ---------- problem generation ---------- */
+function newProblem(){
+  const mul=Math.random()<0.5;
+  if(mul){
+    const style=Math.random()<0.45?1:2;
+    if(style===1){ // N × 0.d  (「45を0.8倍する」タイプ)
+      const N=rint(12,96), d=rint(3,9);
+      P={type:"mul", dispA:String(N), dispB:"0."+d, intA:N, intB:d, shift:1,
+         intAns:N*d};
+    }else{        // a.b × c.d
+      const A=rint(12,96);                    // = a.b ×10
+      const B=pick([3,4,5,6,7,8,9,12,15,25]); // = c.d ×10
+      P={type:"mul", dispA:shiftStr(A,1), dispB:shiftStr(B,1), intA:A, intB:B, shift:2,
+         intAns:A*B};
+    }
+    P.finalAns=shiftStr(P.intAns,P.shift);
+  }else{
+    const half=Math.random()<0.5;
+    let B,Q;
+    if(half){ B=pick([4,6,8]); Q=pick([1.5,2.5,3.5,4.5]); }
+    else{ B=rint(3,9); Q=rint(3,9); }
+    const A=Math.round(B*Q*10)/10*1; // integer since B*Q is integer or x.0
+    const intA=Math.round(B*Q);      // after shifting both ×10... careful:
+    // dividend before shift = (B*Q)/10  →  dispA has 1 decimal
+    P={type:"div", dispA:shiftStr(intA,1), dispB:shiftStr(B,1),
+       intA:intA, intB:B, quotient:Q, finalAns:fmtNum(Q)};
+  }
+  stepIdx=0; wrongInSelf=0;
+  clearNotes();
+  $("#qMain").innerHTML =
+    P.dispA+'<span class="op">'+(P.type==="mul"?"×":"÷")+'</span>'+P.dispB;
+  render();
+}
+
+/* ---------- memory shelf ---------- */
+function clearNotes(){ $("#notes").innerHTML='<div class="shelf-empty">まだ なにも のってないよ</div>'; }
+function pin(label,value){
+  const box=$("#notes");
+  const empty=box.querySelector(".shelf-empty"); if(empty) empty.remove();
+  const n=document.createElement("div");
+  n.className="note pop";
+  n.innerHTML="<small>"+label+"</small>"+value;
+  box.appendChild(n);
+}
+
+/* ---------- rendering steps ---------- */
+function render(){
+  if(level===2){ renderSelf(); return; }
+  if(P.type==="mul"){
+    [renderMulS1,renderIntCalc,renderMulS3,renderDone][stepIdx]();
+  }else{
+    [renderDivS1,renderIntCalc,renderDivS3,renderDone][stepIdx]();
+  }
+}
+
+function stepHeader(num,title){
+  return '<div class="step-title"><span class="step-num">'+num+'</span><h2>'+title+'</h2></div>';
+}
+
+/* --- choice helper --- */
+function renderChoices(correct, wrongs, onOk, okMsg){
+  const opts=shuffle([{t:correct,ok:true},...wrongs.map(t=>({t,ok:false}))]);
+  let html='<div class="choices">'+opts.map((o,i)=>
+    '<button class="choice" data-ok="'+o.ok+'">'+o.t+'</button>').join("")+'</div><div class="msg" id="msg"></div>';
+  return {html, bind(){
+    document.querySelectorAll(".choice").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        if(btn.dataset.ok==="true"){
+          btn.classList.add("ok");
+          $("#msg").textContent=okMsg||"せいかい！"; $("#msg").className="msg good";
+          document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+          setTimeout(onOk,650);
+        }else{
+          btn.classList.add("ng"); btn.disabled=true;
+          $("#msg").textContent="おしい！ ほかのを えらんでみて"; $("#msg").className="msg soft";
+          setTimeout(()=>btn.classList.remove("ng"),350);
+        }
+      });
+    });
+  }};
+}
+
+/* --- STEP1: multiplication --- */
+function renderMulS1(){
+  const correct=P.intA+" × "+P.intB;
+  const wrongs=[ P.dispA+" × "+P.intB, P.intA+" × "+(P.intB*10) ];
+  const c=renderChoices(correct,wrongs,()=>{
+    pin("整数のしき", P.intA+"×"+P.intB);
+    pin("小数点", P.shift+"つ ずらした");
+    stepIdx=1; render();
+  },"OK！ ずらした数は メモだなに おいたよ");
+  $("#stepCard").innerHTML=
+    stepHeader(1,"小数点を なくして 整数の しきに しよう")+c.html+
+    (level===0?'<div class="hint-box">💡 小数点を みぎに 1つ ずらす ＝ 10ばい。'+
+     (P.shift===2?"ふたつの数を どちらも ずらすと、あわせて <b>2つ</b> ずれるよ。":"ずらしたのは <b>1つ</b> だよ。")+"</div>":"");
+  c.bind();
+}
+
+/* --- STEP1: division --- */
+function renderDivS1(){
+  const correct=P.intA+" ÷ "+P.intB;
+  const wrongs=[ P.intA+" ÷ "+P.dispB, P.dispA+" ÷ "+P.intB ];
+  const c=renderChoices(correct,wrongs,()=>{
+    pin("整数のしき", P.intA+"÷"+P.intB);
+    pin("ルール","両方ずらした→答えは そのまま");
+    stepIdx=1; render();
+  },"そう！ わり算は りょうほう おなじだけ ずらすよ");
+  $("#stepCard").innerHTML=
+    stepHeader(1,"りょうほうを 10ばいして 整数の わり算に しよう")+c.html+
+    (level===0?'<div class="hint-box">💡 わり算は <b>わられる数も わる数も おなじだけ</b> ずらすのが ルール。だから 答えは あとで もどさなくて いいんだ。</div>':"");
+  c.bind();
+}
+
+/* --- STEP2: integer calculation (shared) --- */
+let padVal="";
+function renderIntCalc(){
+  const isMul=P.type==="mul";
+  const target=isMul?P.intAns:P.quotient;
+  const title=isMul?(P.intA+" × "+P.intB+" は？"):(P.intA+" ÷ "+P.intB+" は？");
+  padVal="";
+  let hintHtml="";
+  if(isMul){
+    const tens=Math.floor(P.intA/10)*10, ones=P.intA%10;
+    if(tens>0&&ones>0){
+      hintHtml='<div class="hint-box">💡 わけて 考えよう<br>'+tens+"×"+P.intB+" = <b>"+(tens*P.intB)+"</b><br>"+
+        ones+"×"+P.intB+" = <b>"+(ones*P.intB)+"</b><br>あわせて…？</div>";
+    }else{
+      hintHtml='<div class="hint-box">💡 九九と 10ばいを つかおう</div>';
+    }
+  }else{
+    let tt="";
+    for(let k=1;k<=9;k++) tt+="<span>"+P.intB+"×"+k+"="+(P.intB*k)+"</span>";
+    hintHtml='<div class="hint-box">💡 '+P.intB+'のだん を みながらで OK<div class="tt">'+tt+"</div>"+
+      (Number.isInteger(P.quotient)?"":"<br>のこりが "+P.intB+"の <b>はんぶん</b>なら、答えに <b>.5</b> が つくよ")+"</div>";
+  }
+  $("#stepCard").innerHTML=
+    stepHeader(2,title)+
+    '<div class="ans-view" id="ansView">&nbsp;</div>'+
+    buildPad(!isMul)+
+    (level===0?hintHtml:'<button class="hint-btn" id="hintBtn">💡 ヒントを みる</button><div id="hintSlot"></div>')+
+    '<div class="msg" id="msg"></div>';
+  bindPad(val=>{
+    if(parseFloat(val)===target){
+      $("#msg").textContent="せいかい！"; $("#msg").className="msg good";
+      pin("整数のこたえ", fmtNum(target));
+      setTimeout(()=>{stepIdx=2; render();},650);
+    }else{
+      $("#msg").textContent="おしい、もういちど！ ヒントも つかってね"; $("#msg").className="msg soft";
+      padVal=""; $("#ansView").innerHTML="&nbsp;";
+    }
+  });
+  const hb=$("#hintBtn");
+  if(hb) hb.addEventListener("click",()=>{ $("#hintSlot").innerHTML=hintHtml; hb.remove(); });
+}
+
+function buildPad(withDot){
+  return '<div class="pad">'+
+    '<button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="del" data-k="del">⌫</button>'+
+    '<button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="go" data-k="go">OK</button>'+
+    '<button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>'+
+    '<button data-k="0">0</button><button data-k="." '+(withDot?"":"disabled style='opacity:.3'")+'>.</button><button data-k="00">00</button>'+
+  '</div>';
+}
+function bindPad(onGo){
+  document.querySelectorAll(".pad button").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const k=b.dataset.k;
+      if(k==="del"){ padVal=padVal.slice(0,-1); }
+      else if(k==="go"){ if(padVal!=="") onGo(padVal); return; }
+      else if(padVal.length<7){ if(k==="."&&padVal.includes("."))return; padVal+=k; }
+      $("#ansView").textContent=padVal||"\u00A0";
+    });
+  });
+}
+
+/* --- STEP3: multiplication (put the point back) --- */
+function renderMulS3(){
+  const correct=P.finalAns;
+  const w1=shiftStr(P.intAns,P.shift+1), w2=shiftStr(P.intAns,Math.max(P.shift-1,0));
+  const wrongs=[...new Set([w1,w2])].filter(x=>x!==correct).slice(0,2);
+  const c=renderChoices(correct,wrongs,()=>{
+    pin("こたえ", correct);
+    stepIdx=3; render();
+  },"ピッタリ！");
+  $("#stepCard").innerHTML=
+    stepHeader(3,"小数点を "+P.shift+"つ もどそう")+
+    '<div class="hint-box" style="margin-bottom:12px">'+fmtNum(P.intAns)+" の 小数点を ひだりに <b>"+P.shift+"つ</b> うごかすと…？</div>"+
+    c.html;
+  c.bind();
+}
+
+/* --- STEP3: division (leave it!) --- */
+function renderDivS3(){
+  const correct="そのまま "+P.finalAns;
+  const wrongs=[ shiftStr(Math.round(P.quotient*10),2)+" にする", fmtNum(P.quotient*10)+" にする" ];
+  const c=renderChoices(correct,wrongs,()=>{
+    pin("こたえ", P.finalAns);
+    stepIdx=3; render();
+  },"そう！ 両方ずらしたから もどさない！");
+  $("#stepCard").innerHTML=
+    stepHeader(3,"小数点は もどす？ そのまま？")+
+    '<div class="hint-box" style="margin-bottom:12px">メモだなを 見てみよう 👀</div>'+c.html;
+  c.bind();
+}
+
+/* --- done --- */
+function renderDone(){
+  solved++; $("#solved").textContent=solved;
+  $("#stepCard").innerHTML=
+    '<div class="done-face">🎉</div>'+
+    '<div class="done-text">'+P.dispA+(P.type==="mul"?" × ":" ÷ ")+P.dispB+" = "+P.finalAns+"</div>"+
+    '<button class="next-btn" id="nextBtn">つぎの もんだいへ →</button>';
+  $("#nextBtn").addEventListener("click",newProblem);
+}
+
+/* --- self mode: one shot, graceful fallback --- */
+function renderSelf(){
+  padVal="";
+  $("#stepCard").innerHTML=
+    stepHeader("？","こたえは？")+
+    '<div class="ans-view" id="ansView">&nbsp;</div>'+buildPad(true)+
+    '<div class="msg" id="msg"></div>'+
+    '<button class="ghost-btn" id="stepFallback">🐢 ステップに わけて とく</button>';
+  bindPad(val=>{
+    if(parseFloat(val)===parseFloat(P.finalAns)){
+      stepIdx=3; renderDone();
+    }else{
+      wrongInSelf++;
+      padVal=""; $("#ansView").innerHTML="&nbsp;";
+      if(wrongInSelf>=2){
+        $("#msg").textContent="むずかしい日も ある！ ステップに わけちゃおう"; $("#msg").className="msg soft";
+      }else{
+        $("#msg").textContent="おしい！ もういちど"; $("#msg").className="msg soft";
+      }
+    }
+  });
+  $("#stepFallback").addEventListener("click",()=>{ level=1; syncSeg(); stepIdx=0; render(); });
+}
+
+/* ---------- support level ---------- */
+function syncSeg(){
+  document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on",Number(b.dataset.lv)===level));
+}
+document.querySelectorAll("#seg button").forEach(b=>{
+  b.addEventListener("click",()=>{ level=Number(b.dataset.lv); syncSeg(); stepIdx=0; render(); });
+});
+
+/* ---------- decimal point sprint ---------- */
+let spTimer=null, spLeft=60, spScore=0;
+$("#sprintOpen").addEventListener("click",()=>{ $("#overlay").classList.add("show"); startSprint(); });
+$("#sprintClose").addEventListener("click",closeSprint);
+function closeSprint(){ $("#overlay").classList.remove("show"); clearInterval(spTimer); }
+function startSprint(){
+  spLeft=60; spScore=0;
+  clearInterval(spTimer);
+  spTimer=setInterval(()=>{
+    spLeft--; const t=$("#spTime"); if(t)t.textContent=spLeft;
+    if(spLeft<=0){ clearInterval(spTimer); endSprint(); }
+  },1000);
+  sprintQ();
+}
+function sprintQ(){
+  const base=rint(2,98);                     // e.g. 37 → 3.7
+  const asDec=Math.random()<0.5;
+  const value=asDec?shiftStr(base,1):String(base);
+  const up=Math.random()<0.5;                // ×10 or ÷10
+  const correct=up?(asDec?shiftStr(base,0):String(base*10))
+                  :(asDec?shiftStr(base,2):shiftStr(base,1));
+  const wrongA=up?(asDec?shiftStr(base,2):shiftStr(base,1))
+                 :(asDec?shiftStr(base,0):String(base*10));
+  const wrongB=value;
+  const opts=shuffle([...new Set([correct,wrongA,wrongB])]).slice(0,3);
+  $("#sprintBody").innerHTML=
+    '<div class="sprint-head"><span>せいかい: <b style="color:var(--green)">'+spScore+'</b></span><span class="sprint-time" id="spTime">'+spLeft+"</span></div>"+
+    '<div class="sprint-q">'+value+" を "+(up?"<b style='color:var(--green)'>10ばい</b>":"<b style='color:var(--blue)'>10で わる</b>")+" と？</div>"+
+    '<div class="choices">'+opts.map(o=>'<button class="choice" data-v="'+o+'">'+o+"</button>").join("")+"</div>";
+  document.querySelectorAll("#sprintBody .choice").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(btn.dataset.v===correct){ spScore++; sprintQ(); }
+      else{ btn.classList.add("ng"); btn.disabled=true; }
+    });
+  });
+}
+function endSprint(){
+  $("#sprintBody").innerHTML=
+    '<div class="done-face">⚡</div>'+
+    '<div class="done-text">'+spScore+' 問 せいかい！</div>'+
+    '<p style="text-align:center;color:var(--sub);font-weight:700">小数点うごかしが はやくなると、けいさんが ぐっと ラクになるよ</p>'+
+    '<button class="next-btn" id="spAgain">もういちど</button>'+
+    '<button class="ghost-btn" id="spEnd">おわる</button>';
+  $("#spAgain").addEventListener("click",startSprint);
+  $("#spEnd").addEventListener("click",closeSprint);
+}
+
+/* ---------- go ---------- */
+newProblem();
+</script>
+</body>
+</html>
