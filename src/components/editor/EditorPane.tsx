@@ -1,48 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
 import { EditorToolbar, type ToolbarAction } from "@/components/editor/EditorToolbar";
 import { MarkdownInput } from "@/components/editor/MarkdownInput";
 
-interface EditorPaneProps {
-  value: string;
-  onChange: (value: string) => void;
-}
+interface EditorPaneProps { value: string; onChange: (value: string) => void; }
+interface InsertResult { text: string; selectionStart: number; selectionEnd: number; }
 
-interface InsertResult {
-  text: string;
-  selectionStart: number;
-  selectionEnd: number;
-}
-
-function applyAction(
-  text: string,
-  start: number,
-  end: number,
-  action: ToolbarAction,
-): InsertResult {
+function applyAction(text: string, start: number, end: number, action: ToolbarAction): InsertResult {
   if (action.kind === "wrap") {
-    const selected = text.slice(start, end);
-    const replacement = `${action.marker}${selected || "文字"}${action.marker}`;
+    const selected = text.slice(start, end) || "文字";
+    const replacement = `${action.marker}${selected}${action.marker}`;
     const nextStart = start + action.marker.length;
-    const nextEnd = nextStart + (selected || "文字").length;
-    return {
-      text: text.slice(0, start) + replacement + text.slice(end),
-      selectionStart: nextStart,
-      selectionEnd: nextEnd,
-    };
+    return { text: text.slice(0, start) + replacement + text.slice(end), selectionStart: nextStart, selectionEnd: nextStart + selected.length };
   }
 
   if (action.kind === "link") {
     const selected = text.slice(start, end) || "リンク文字";
     const replacement = `[${selected}](URL)`;
     const urlStart = start + selected.length + 3;
-    return {
-      text: text.slice(0, start) + replacement + text.slice(end),
-      selectionStart: urlStart,
-      selectionEnd: urlStart + 3,
-    };
+    return { text: text.slice(0, start) + replacement + text.slice(end), selectionStart: urlStart, selectionEnd: urlStart + 3 };
+  }
+
+  if (action.kind === "insert") {
+    const selected = text.slice(start, end);
+    const fence = "```";
+    const snippet = selected && action.label === "コードブロック" ? `${fence}\n${selected}\n${fence}` : action.snippet;
+    const caret = start + snippet.length;
+    return { text: text.slice(0, start) + snippet + text.slice(end), selectionStart: caret, selectionEnd: caret };
   }
 
   const lineStart = text.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
@@ -51,9 +36,11 @@ function applyAction(
   const selectedLines = text.slice(lineStart, lineEnd);
   const lines = selectedLines.split("\n");
   const allPrefixed = lines.every((line) => line.startsWith(action.prefix));
-  const updatedLines = lines.map((line) =>
-    allPrefixed ? line.slice(action.prefix.length) : `${action.prefix}${line}`,
-  );
+  const updatedLines = lines.map((line, index) => {
+    if (allPrefixed) return line.slice(action.prefix.length);
+    if (action.prefix === "1. ") return `${index + 1}. ${line}`;
+    return `${action.prefix}${line}`;
+  });
   const replacement = updatedLines.join("\n");
   const delta = replacement.length - selectedLines.length;
   return {
@@ -80,32 +67,16 @@ export function EditorPane({ value, onChange }: EditorPaneProps) {
   const handleInsert = (action: ToolbarAction) => {
     const element = textareaRef.current;
     if (!element) return;
-    const result = applyAction(
-      element.value,
-      element.selectionStart,
-      element.selectionEnd,
-      action,
-    );
-    pendingSelection.current = {
-      start: result.selectionStart,
-      end: result.selectionEnd,
-    };
+    const result = applyAction(element.value, element.selectionStart, element.selectionEnd, action);
+    pendingSelection.current = { start: result.selectionStart, end: result.selectionEnd };
     onChange(result.text);
   };
 
   return (
     <div className="flex h-full min-h-0 flex-col border-r border-zinc-200 bg-white">
-      <EditorToolbar
-        onInsert={handleInsert}
-        activeHelp={activeHelp}
-        onHelpChange={setActiveHelp}
-      />
+      <EditorToolbar onInsert={handleInsert} activeHelp={activeHelp} onHelpChange={setActiveHelp} />
       <div className="min-h-0 flex-1">
-        <MarkdownInput
-          value={value}
-          onChange={onChange}
-          textareaRef={textareaRef}
-        />
+        <MarkdownInput value={value} onChange={onChange} textareaRef={textareaRef} />
       </div>
     </div>
   );
