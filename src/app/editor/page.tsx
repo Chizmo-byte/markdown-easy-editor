@@ -108,6 +108,39 @@ export default function EditorPage() {
           </div>
         </div>
       </section>
+      <section className="mx-auto mt-8 w-full max-w-5xl border-t border-zinc-200 px-4 py-10 text-sm leading-7 text-zinc-700 sm:px-6" aria-labelledby="editor-guide-title">
+        <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Markdown Guide</p>
+            <h2 id="editor-guide-title" className="mt-2 text-xl font-bold tracking-tight text-zinc-900">Markdownを学びながら、見た目を確認できる無料エディタ</h2>
+            <p className="mt-3">Markdown Easy Editorは、Markdownの記号と表示結果を同時に確認できる学習向けの無料Webエディタです。AIが生成した文章やメモを貼り付けて、見出し、強調、リスト、リンク、引用、表、コードブロックなどの記法を気軽に試せます。</p>
+            <p className="mt-3">左側にMarkdownを書き、右側のプレビューで結果を確認してください。ツールバーのボタンにカーソルを合わせると、記法の意味と入力例が表示されます。</p>
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-zinc-900">対応している主な記法</h2>
+            <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
+              <li>見出し（#）</li>
+              <li>太字・斜体</li>
+              <li>箇条書き</li>
+              <li>番号付きリスト</li>
+              <li>リンク・引用</li>
+              <li>表・タスク</li>
+              <li>コードブロック</li>
+              <li>取り消し線</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <details className="rounded-lg border border-zinc-200 bg-white p-4">
+            <summary className="cursor-pointer font-semibold text-zinc-900">Markdownとは何ですか？</summary>
+            <p className="mt-2">Markdownは、記号を使って見出しやリストなどの文章構造を表現する軽量な書き方です。シンプルなテキストとして保存でき、ブログ、README、メモ、AIへの指示文など幅広く使われています。</p>
+          </details>
+          <details className="rounded-lg border border-zinc-200 bg-white p-4">
+            <summary className="cursor-pointer font-semibold text-zinc-900">入力した内容は保存されますか？</summary>
+            <p className="mt-2">このエディタは入力とプレビューをブラウザ内で処理します。現在の画面を閉じる前に、必要なMarkdownをコピーして保存してください。</p>
+          </details>
+        </div>
+      </section>
     </main>
   );
 }
