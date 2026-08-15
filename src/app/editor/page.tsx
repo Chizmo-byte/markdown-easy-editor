@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { MarkdownPreview } from "@/components/editor/MarkdownPreview";
-import { EditorPane } from "@/components/editor/EditorPane";
+import { MarkdownPreview } from "@/features/editor/components/MarkdownPreview";
+import { EditorPane } from "@/features/editor/components/EditorPane";
 
 const SAMPLE_MARKDOWN = `# Markdownを始めよう
 

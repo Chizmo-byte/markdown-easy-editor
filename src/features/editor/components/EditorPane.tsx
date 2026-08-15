@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { EditorToolbar, type ToolbarAction } from "@/components/editor/EditorToolbar";
-import { MarkdownInput } from "@/components/editor/MarkdownInput";
+import { EditorToolbar, type ToolbarAction } from "@/features/editor/components/EditorToolbar";
+import { MarkdownInput } from "@/features/editor/components/MarkdownInput";
 
 interface EditorPaneProps { value: string; onChange: (value: string) => void; }
 interface InsertResult { text: string; selectionStart: number; selectionEnd: number; }

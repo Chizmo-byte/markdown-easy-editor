@@ -6,7 +6,7 @@
  */
 
 import type { TargetPlatform } from "@/lib/markdown/processor";
-import { SegmentedControl } from "@/components/editor/SegmentedControl";
+import { SegmentedControl } from "@/features/editor/components/SegmentedControl";
 
 interface PlatformSwitchProps {
   /** 現在選択中のプラットフォーム。 */
