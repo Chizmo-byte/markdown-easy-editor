@@ -6,13 +6,18 @@ function countLines(value: string): number {
   return value.length === 0 ? 1 : value.split(/\r\n|\r|\n/).length;
 }
 
+function countLineBreaks(value: string): number {
+  return (value.match(/\r\n|\r|\n/g) ?? []).length;
+}
+
 function countCharacters(value: string): number {
-  return Array.from(value).length;
+  return Array.from(value.replace(/\r\n|\r|\n/g, "")).length;
 }
 
 export function EditorStats({ value }: EditorStatsProps) {
   const characterCount = countCharacters(value);
   const lineCount = countLines(value);
+  const lineBreakCount = countLineBreaks(value);
 
   return (
     <div
@@ -21,6 +26,7 @@ export function EditorStats({ value }: EditorStatsProps) {
     >
       <span>文字数 {characterCount}</span>
       <span>行数 {lineCount}</span>
+      <span>改行 {lineBreakCount}</span>
       <span className="text-zinc-400">Markdownを編集中</span>
     </div>
   );
