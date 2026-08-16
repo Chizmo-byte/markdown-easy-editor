@@ -82,16 +82,23 @@ export default function EditorPage() {
     }
   };
   const handleDownload = () => {
+    const requestedName = window.prompt("保存するファイル名を入力してください（.mdは自動で付きます）", "markdown-easy-editor");
+    if (requestedName === null) return;
+    const safeName = requestedName
+      .trim()
+      .replace(/\.md$/i, "")
+      .replace(/[\\/:*?"<>|]/g, "-")
+      .trim() || "markdown-easy-editor";
     const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "markdown-easy-editor.md";
+    anchor.download = `${safeName}.md`;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
     URL.revokeObjectURL(url);
-    showActionMessage("Markdownファイルを保存しました");
+    showActionMessage(`${safeName}.mdを保存しました`);
   };
 
   return (
