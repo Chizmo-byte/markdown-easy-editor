@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://lifemargin.net/contact" },
 };
 
-const contactFormUrl = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
+const defaultContactFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSelLDvCmF8GOMf-Q3IGiJPSTBi6RPe_EqeGvkDFiAF8lvvlKg/viewform?usp=dialog";
+const contactFormUrl = process.env.NEXT_PUBLIC_CONTACT_FORM_URL ?? defaultContactFormUrl;
 
 export default function ContactPage() {
   return (
@@ -22,7 +23,7 @@ export default function ContactPage() {
           {contactFormUrl ? (
             <a className="mt-6 inline-flex rounded-full bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-700" href={contactFormUrl} target="_blank" rel="noreferrer">お問い合わせフォームを開く</a>
           ) : (
-            <p className="mt-6 rounded-lg bg-zinc-50 px-4 py-3 text-zinc-600">お問い合わせフォームは準備中です。公開前に運営者が指定するフォームURLを設定します。</p>
+            <p className="mt-6 rounded-lg bg-zinc-50 px-4 py-3 text-zinc-600">お問い合わせフォームは現在準備中です。</p>
           )}
           <p className="mt-6 text-xs text-zinc-500">お問い合わせ内容には、パスワード、クレジットカード情報、公開前の機密情報などを記載しないでください。</p>
         </div>
