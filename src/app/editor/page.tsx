@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { MarkdownPreview } from "@/features/editor/components/MarkdownPreview";
 import { EditorPane } from "@/features/editor/components/EditorPane";
+import { SiteFooter } from "@/components/shared/SiteFooter";
+import { SiteHeader } from "@/components/shared/SiteHeader";
 
 const SAMPLE_MARKDOWN = `# Markdownを始めよう
 
@@ -102,7 +104,9 @@ export default function EditorPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-zinc-50 text-zinc-900">
+    <div className="flex min-h-screen flex-col bg-zinc-50 text-zinc-900">
+      <SiteHeader current="editor" />
+      <main className="flex flex-1 flex-col">
       <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">Learning Markdown</p>
@@ -188,6 +192,8 @@ export default function EditorPage() {
           </details>
         </div>
       </section>
-    </main>
+      </main>
+      <SiteFooter />
+    </div>
   );
 }
