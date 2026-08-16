@@ -47,6 +47,7 @@ export default function EditorPage() {
   const [text, setText] = useState("");
   const [showSample, setShowSample] = useState(true);
   const [view, setView] = useState<"split" | "editor" | "preview">("split");
+  const [actionMessage, setActionMessage] = useState("");
   const markdown = showSample && text.length === 0 ? SAMPLE_MARKDOWN : text;
   const hint = getLearningHint(markdown);
 
@@ -57,6 +58,40 @@ export default function EditorPage() {
   const handleClear = () => {
     setShowSample(false);
     setText("");
+    setActionMessage("");
+  };
+  const showActionMessage = (message: string) => {
+    setActionMessage(message);
+    window.setTimeout(() => setActionMessage(""), 2200);
+  };
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(markdown);
+      showActionMessage("Markdownをコピーしました");
+    } catch {
+      const textarea = document.createElement("textarea");
+      textarea.value = markdown;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      showActionMessage("Markdownをコピーしました");
+    }
+  };
+  const handleDownload = () => {
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "markdown-easy-editor.md";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    showActionMessage("Markdownファイルを保存しました");
   };
 
   return (
@@ -74,6 +109,8 @@ export default function EditorPage() {
               </button>
             ))}
           </div>
+          <button type="button" onClick={handleCopy} className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50">コピー</button>
+          <button type="button" onClick={handleDownload} className="rounded-md border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100">.md保存</button>
           <button type="button" onClick={handleClear} className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50">クリア</button>
         </div>
       </header>
@@ -84,7 +121,10 @@ export default function EditorPage() {
             <h2 className="text-sm font-semibold text-zinc-800">書いて、見て、覚える</h2>
             <p className="text-xs text-zinc-500">ボタンにカーソルを合わせると記法の使い方が分かります。</p>
           </div>
-          <p className="hidden text-xs text-zinc-400 md:block">入力内容はこのブラウザ内で処理されます</p>
+          <div className="flex items-center gap-3">
+            <p className="hidden text-xs text-zinc-400 md:block">入力内容はこのブラウザ内で処理されます</p>
+            <p className="min-h-4 text-xs text-emerald-600" role="status" aria-live="polite">{actionMessage}</p>
+          </div>
         </div>
 
         <div className="mb-3 flex items-start gap-3 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2.5 text-xs text-indigo-950">
