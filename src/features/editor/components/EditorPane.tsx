@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { EditorToolbar, type ToolbarAction } from "@/features/editor/components/EditorToolbar";
 import { MarkdownInput } from "@/features/editor/components/MarkdownInput";
+import { EditorStats } from "@/features/editor/components/EditorStats";
 
 interface EditorPaneProps { value: string; onChange: (value: string) => void; }
 interface InsertResult { text: string; selectionStart: number; selectionEnd: number; }
@@ -78,6 +79,7 @@ export function EditorPane({ value, onChange }: EditorPaneProps) {
       <div className="min-h-0 flex-1">
         <MarkdownInput value={value} onChange={onChange} textareaRef={textareaRef} />
       </div>
+      <EditorStats value={value} />
     </div>
   );
 }
