@@ -92,9 +92,9 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="relative min-h-[230px] lg:min-h-[300px]" aria-hidden="true">
-              <div className="absolute right-4 top-0 font-serif text-[12rem] font-bold leading-none tracking-[-0.12em] text-[#0088b0]/50">01</div>
-              <div className="absolute right-0 top-1 font-serif text-[12rem] font-bold leading-none tracking-[-0.12em] text-[#d6006c]/50">01</div>
-              <div className="absolute right-2 top-0 font-serif text-[12rem] font-bold leading-none tracking-[-0.12em] text-[#201e1d]">01</div>
+              <div className="absolute right-0 top-8 max-w-[280px] border-t border-[#201e1d] pt-4 text-right font-mono text-[10px] uppercase tracking-[0.24em] text-[#6f6a66]">
+                tools for a little more room
+              </div>
               <div className="absolute bottom-5 right-0 flex">
                 <span className="h-8 w-16 bg-[#0088b0]" /><span className="h-8 w-16 bg-[#d6006c]" /><span className="h-8 w-16 bg-[#b9a400]" /><span className="h-8 w-16 bg-[#201e1d]" /><span className="h-8 w-16 bg-[#9fe870]" />
               </div>
