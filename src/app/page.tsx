@@ -7,69 +7,89 @@ interface Tool {
   name: string;
   description: string;
   href?: string;
-  status: "available" | "coming";
-  accent: "cyan" | "magenta" | "lime";
+  status?: string;
+  tags?: string;
+  accent: "cyan" | "lime" | "magenta";
+  action: string;
 }
 
 const TOOLS: ReadonlyArray<Tool> = [
   {
     number: "01",
     name: "Markdown Easy Editor",
-    description: "Markdownを書きながら、記法の意味と見た目を学べるメインツール。AIが生成した文章やメモも、気軽に整えられます。",
+    description:
+      "見出し・リスト・引用・強調・区切り。ボタンを押すだけで、その記法が何のためにあるのかが分かります。簡単なマークダウン文書なら、そのまま仕上がります。",
     href: "/editor",
-    status: "available",
     accent: "cyan",
+    action: "エディタを開く",
   },
   {
     number: "02",
-    name: "子どもの学びツール",
-    description: "遊びながら、考える力と知る楽しさを育てるツールを制作しています。",
-    status: "coming",
+    name: "こどもの学び",
+    description:
+      "つまずきやすい単元を、さわって確かめられる小さなツールに。これからも増えていきます。",
+    tags: "時計　/　文章題　/　さくらんぼ計算　/　わり算　/　ものさし　/　小数",
     accent: "lime",
+    action: "一覧を見る",
   },
   {
     number: "03",
     name: "ぬりえジェネレーター",
-    description: "自分だけのぬりえをつくって楽しめるツールを制作しています。",
-    status: "coming",
+    description:
+      "好きなテーマを入力すると、印刷できるぬりえを自動で生成します。線の太さは年齢に合わせて選べます。",
+    status: "NEW PLATE",
     accent: "magenta",
+    action: "つくってみる",
   },
 ];
 
-const PHILOSOPHY: ReadonlyArray<string> = [
-  "現代のデジタルツールは多機能になりすぎている。しかし、本当に必要なのは、思考を妨げない最小限の機能だけである。",
-  "LifeMarginは、不要な装飾や複雑な操作を削ぎ落とし、本質的なアウトプットに集中できる誠実な道具をつくります。",
-  "ツールによって生まれた時間のゆとりこそが、人生の余白（Margin）となり、新しい創造性を生むと信じています。",
+const PHILOSOPHY = [
+  {
+    number: "I",
+    text: "現代のデジタルツールは多機能になりすぎている。しかし、本当に必要なのは、思考を妨げない最小限の機能だけである。",
+  },
+  {
+    number: "II",
+    text: "私たちは、不要な装飾や複雑な操作を削ぎ落とし、目的にまっすぐ効く「誠実なツール」を追求します。子ども向けの学習ツールも、同じ考えでつくっています。",
+  },
+  {
+    number: "III",
+    text: "ツールによって生まれた時間のゆとりこそが、人生の余白（Margin）となり、新しい創造性を生むと信じているからです。",
+  },
 ];
 
-const ACCENT_CLASSES = {
-  cyan: { line: "bg-[#0088b0]", number: "text-[#0088b0]", button: "bg-[#0088b0] text-white hover:bg-[#006f91]" },
-  magenta: { line: "bg-[#d6006c]", number: "text-[#d6006c]", button: "bg-[#d6006c] text-white hover:bg-[#b4005a]" },
-  lime: { line: "bg-[#9fe870]", number: "text-[#4d6d38]", button: "border-[#b8c9ae] bg-[#f2f8ed] text-[#4d6d38]" },
+const ACCENTS = {
+  cyan: { number: "text-[#0088b0]", button: "bg-[#9fe870] text-[#201e1d] hover:bg-[#8bdb60]" },
+  lime: { number: "text-[#201e1d]", button: "bg-[#201e1d] text-[#f3f2f2] hover:bg-[#0088b0]" },
+  magenta: { number: "text-[#d6006c]", button: "border border-[#d6006c] text-[#d6006c] hover:bg-[#d6006c] hover:text-[#f3f2f2]" },
 } as const;
 
-function ToolCard({ tool }: { tool: Tool }) {
-  const accent = ACCENT_CLASSES[tool.accent];
-  const card = (
-    <article className="group relative flex min-h-[300px] flex-col overflow-hidden border border-[#d8d5d2] bg-[#faf9f8] p-7 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[8px_8px_0_#d8d5d2] sm:p-8">
-      <div className={`absolute inset-x-0 top-0 h-1.5 ${accent.line}`} />
-      <div className="flex items-start justify-between gap-4">
-        <span className={`font-serif text-7xl font-bold leading-none tracking-[-0.08em] opacity-80 ${accent.number}`} aria-hidden="true">{tool.number}</span>
-        {tool.status === "coming" ? <span className="border border-[#d8d5d2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#817a75]">制作中</span> : null}
+function ToolRow({ tool }: { tool: Tool }) {
+  const accent = ACCENTS[tool.accent];
+  const content = (
+    <article className="grid gap-7 border-t border-[#d8d5d2] py-8 sm:grid-cols-[76px_1fr_auto] sm:items-start sm:gap-8 sm:py-10">
+      <div className={`font-serif text-6xl font-bold leading-none tracking-[-0.08em] ${accent.number}`} aria-hidden="true">
+        {tool.number}
       </div>
-      <h3 className="mt-8 font-serif text-2xl font-bold tracking-tight text-[#201e1d]">{tool.name}</h3>
-      <p className="mt-4 flex-1 text-sm leading-7 text-[#6f6a66]">{tool.description}</p>
-      <div className="mt-7">
-        {tool.status === "available" && tool.href ? (
-          <span className={`inline-flex items-center px-5 py-2.5 text-sm font-semibold transition-colors ${accent.button}`}>使ってみる <span className="ml-2" aria-hidden="true">↗</span></span>
+      <div className="max-w-2xl">
+        <h3 className="font-serif text-2xl font-bold tracking-tight sm:text-3xl">{tool.name}</h3>
+        <p className="mt-3 text-sm leading-7 text-[#6f6a66] sm:text-base">{tool.description}</p>
+        {tool.tags ? <p className="mt-4 text-xs leading-6 text-[#817a75]">{tool.tags}</p> : null}
+        {tool.status ? <p className="mt-4 font-mono text-[10px] font-semibold tracking-[0.24em] text-[#d6006c]">{tool.status}</p> : null}
+      </div>
+      <div className="sm:pt-1">
+        {tool.href ? (
+          <Link href={tool.href} className={`inline-flex px-5 py-3 text-sm font-semibold transition-colors ${accent.button}`}>
+            {tool.action}
+          </Link>
         ) : (
-          <span className="text-xs font-medium tracking-wide text-[#817a75]">近日公開予定</span>
+          <span className={`inline-flex px-5 py-3 text-sm font-semibold ${accent.button}`}>{tool.action}</span>
         )}
       </div>
     </article>
   );
 
-  return tool.href ? <Link href={tool.href} aria-label={`${tool.name}を開く`}>{card}</Link> : card;
+  return tool.href ? <Link href={tool.href} aria-label={`${tool.name}を開く`} className="block">{content}</Link> : content;
 }
 
 export default function LandingPage() {
@@ -77,45 +97,59 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#f3f2f2] text-[#201e1d]">
       <SiteHeader />
       <main>
-        <section className="mx-auto max-w-6xl px-6 pb-24 pt-20 sm:pb-32 sm:pt-28">
-          <div className="grid items-end gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.32em] text-[#6f6a66]">LifeMargin / Tools for a little more room</p>
-              <h1 className="mt-8 max-w-3xl font-serif text-5xl font-bold leading-[1.08] tracking-[-0.04em] sm:text-7xl">
-                考える時間と、<br />
-                <span className="relative inline-block">書く時間に、<span className="relative">余白を。</span></span>
-              </h1>
-              <p className="mt-8 max-w-xl text-base leading-8 text-[#6f6a66] sm:text-lg">LifeMarginは、デジタル作業のムダを削ぎ落とし、思考の整理とアウトプットを軽くする、小さな道具をつくっています。</p>
-              <div className="mt-10 flex flex-wrap gap-3">
-                <a href="#tools" className="inline-flex items-center bg-[#201e1d] px-6 py-3 text-sm font-semibold text-[#f3f2f2] transition-colors hover:bg-[#0088b0]">ツールを見る <span className="ml-3" aria-hidden="true">↓</span></a>
-                <Link href="/about" className="inline-flex items-center border border-[#bdb8b4] px-6 py-3 text-sm font-semibold text-[#201e1d] hover:border-[#201e1d]">LifeMarginについて</Link>
-              </div>
+        <section className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pb-20 sm:pt-20">
+          <div className="border-b-2 border-[#201e1d] pb-12 sm:pb-16">
+            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.28em] text-[#6f6a66]">LifeMargin — Proof Sheet</p>
+            <h1 className="mt-12 max-w-4xl font-serif text-4xl font-bold leading-tight tracking-[-0.04em] sm:text-6xl lg:text-7xl">
+              削ぎ落としてから、渡す。
+            </h1>
+            <p className="mt-8 max-w-3xl text-base leading-8 text-[#6f6a66] sm:text-lg">
+              LifeMarginは、ムダを削ぎ落とした小さな道具をつくっています。多機能である必要はありません。ひとつの目的に、まっすぐ効くこと。大人の道具も、子どもの学習ツールも、同じ考えでつくっています。
+            </p>
+          </div>
+
+          <div className="border-b border-[#d8d5d2] py-8 sm:py-10">
+            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-[#6f6a66]">Philosophy</p>
+            <blockquote className="mt-6 max-w-4xl font-serif text-xl italic leading-8 sm:text-2xl">
+              「本当に必要なのは、思考を妨げない最小限の機能だけである。」
+            </blockquote>
+          </div>
+
+          <nav className="flex flex-wrap gap-x-5 gap-y-2 py-6 font-mono text-[10px] uppercase tracking-[0.12em] text-[#6f6a66]" aria-label="ページ内案内">
+            <span>IN THIS SHEET</span>
+            <a href="#tools" className="hover:text-[#0088b0]">01 Markdown Easy Editor</a>
+            <span>02 こどもの学び</span>
+            <span>03 ぬりえジェネレーター</span>
+          </nav>
+        </section>
+
+        <section id="tools" className="scroll-mt-10 px-6 pb-20 sm:pb-28">
+          <div className="mx-auto max-w-6xl">
+            <div className="flex items-end justify-between gap-6 border-b-2 border-[#201e1d] pb-5">
+              <h2 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl">刷版一覧</h2>
+              <p className="hidden font-mono text-[10px] uppercase tracking-[0.24em] text-[#6f6a66] sm:block">Plates — 3 Tools</p>
             </div>
-            <div className="relative min-h-[230px] lg:min-h-[300px]" aria-hidden="true">
-              <div className="absolute right-0 top-8 max-w-[280px] border-t border-[#201e1d] pt-4 text-right font-mono text-[10px] uppercase tracking-[0.24em] text-[#6f6a66]">
-                tools for a little more room
-              </div>
-              <div className="absolute bottom-5 right-0 flex">
-                <span className="h-8 w-16 bg-[#0088b0]" /><span className="h-8 w-16 bg-[#d6006c]" /><span className="h-8 w-16 bg-[#b9a400]" /><span className="h-8 w-16 bg-[#201e1d]" /><span className="h-8 w-16 bg-[#9fe870]" />
-              </div>
-            </div>
+            <div>{TOOLS.map((tool) => <ToolRow key={tool.number} tool={tool} />)}</div>
           </div>
         </section>
 
-        <section id="tools" className="border-y border-[#d8d5d2] bg-[#faf9f8] px-6 py-20 scroll-mt-10 sm:py-28">
+        <section className="border-t-2 border-[#201e1d] px-6 py-20 sm:py-28">
           <div className="mx-auto max-w-6xl">
             <div className="flex items-end justify-between gap-6">
-              <div><p className="text-xs font-medium uppercase tracking-[0.28em] text-[#0088b0]">01 — Tools</p><h2 className="mt-4 font-serif text-4xl font-bold tracking-tight sm:text-5xl">つくっている道具</h2></div>
-              <p className="hidden max-w-xs text-right text-sm leading-6 text-[#817a75] sm:block">ひとつずつ、必要なものを。<br />公開済みのツールからお試しください。</p>
+              <h2 className="font-serif text-2xl font-bold tracking-tight sm:text-3xl">なぜ、LifeMarginなのか</h2>
+              <p className="hidden font-mono text-[10px] uppercase tracking-[0.24em] text-[#6f6a66] sm:block">Colophon</p>
             </div>
-            <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-3">{TOOLS.map((tool) => <ToolCard key={tool.number} tool={tool} />)}</div>
-          </div>
-        </section>
-
-        <section className="px-6 py-20 sm:py-28">
-          <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.7fr_1.3fr] lg:gap-24">
-            <div><p className="text-xs font-medium uppercase tracking-[0.28em] text-[#d6006c]">02 — Philosophy</p><h2 className="mt-4 font-serif text-4xl font-bold tracking-tight sm:text-5xl">なぜ、<br />LifeMarginなのか。</h2></div>
-            <div className="space-y-7 border-l-2 border-[#d6006c] pl-6 sm:pl-10">{PHILOSOPHY.map((paragraph) => <p key={paragraph} className="text-base leading-8 text-[#6f6a66]">{paragraph}</p>)}</div>
+            <div className="mt-10 space-y-8">
+              {PHILOSOPHY.map((item) => (
+                <div key={item.number} className="grid gap-3 sm:grid-cols-[44px_1fr] sm:gap-6">
+                  <p className="font-mono text-xs text-[#6f6a66]">{item.number}</p>
+                  <p className="max-w-4xl text-sm leading-8 text-[#6f6a66] sm:text-base">{item.text}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-14 flex h-4 max-w-[230px]">
+              <span className="flex-1 bg-[#0088b0]" /><span className="flex-1 bg-[#d6006c]" /><span className="flex-1 bg-[#b9a400]" /><span className="flex-1 bg-[#201e1d]" /><span className="flex-1 bg-[#9fe870]" /><span className="flex-1 bg-[#d8d5d2]" /><span className="flex-1 bg-[#e9e7e5]" />
+            </div>
           </div>
         </section>
       </main>
