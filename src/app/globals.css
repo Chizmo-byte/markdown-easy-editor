@@ -10,6 +10,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Proof Sheet（トップページ）用。和文は明朝体へフォールバックさせる。 */
+  --font-serif: var(--font-source-serif), var(--font-shippori-mincho), "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
+  --font-mincho: var(--font-shippori-mincho), "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
 }
 
 @media (prefers-color-scheme: dark) {
