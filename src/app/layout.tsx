@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 const shipporiMincho = Shippori_Mincho({
   variable: "--font-shippori-mincho",
   weight: ["500", "600", "700"],
+  subsets: ["latin"],
   display: "swap",
   preload: false,
 });
