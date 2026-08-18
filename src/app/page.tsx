@@ -120,24 +120,34 @@ function ToolRow({ tool }: { tool: Tool }) {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#f3f2f2] text-[#201e1d]">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-50">
+        <span className="absolute left-4 top-4 h-5 w-5 border-l border-t border-[#201e1d]" />
+        <span className="absolute right-4 top-4 h-5 w-5 border-r border-t border-[#201e1d]" />
+        <span className="absolute bottom-4 left-4 h-5 w-5 border-b border-l border-[#201e1d]" />
+        <span className="absolute bottom-4 right-4 h-5 w-5 border-b border-r border-[#201e1d]" />
+      </div>
       <SiteHeader />
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pb-20 sm:pt-20">
           <div className="border-b-2 border-[#201e1d] pb-12 sm:pb-16">
             <p className="font-mono text-[10px] font-medium uppercase tracking-[0.28em] text-[#6f6a66]">LifeMargin — Proof Sheet</p>
-            <h1 className="mt-12 max-w-4xl font-serif text-4xl font-bold leading-tight tracking-[-0.04em] sm:text-6xl lg:text-7xl">
-              削ぎ落としてから、渡す。
-            </h1>
-            <p className="mt-8 max-w-3xl text-base leading-8 text-[#6f6a66] sm:text-lg">
-              LifeMarginは、ムダを削ぎ落とした小さな道具をつくっています。多機能である必要はありません。ひとつの目的に、まっすぐ効くこと。大人の道具も、子どもの学習ツールも、同じ考えでつくっています。
-            </p>
-          </div>
-
-          <div className="border-b border-[#d8d5d2] py-8 sm:py-10">
-            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-[#6f6a66]">Philosophy</p>
-            <blockquote className="mt-6 max-w-4xl font-serif text-xl italic leading-8 sm:text-2xl">
-              「本当に必要なのは、思考を妨げない最小限の機能だけである。」
-            </blockquote>
+            <div className="mt-12 grid gap-12 sm:grid-cols-2">
+              <div>
+                <h1 className="font-serif text-4xl font-bold leading-tight tracking-[0.08em] sm:text-5xl lg:text-6xl">
+                  削ぎ落としてから、渡す。
+                </h1>
+                <p className="mt-8 text-base leading-8 text-[#6f6a66] sm:text-lg">
+                  LifeMarginは、ムダを削ぎ落とした小さな道具をつくっています。多機能である必要はありません。ひとつの目的に、まっすぐ効くこと。大人の道具も、子どもの学習ツールも、同じ考えでつくっています。
+                </p>
+              </div>
+              <div className="sm:pt-2">
+                <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-[#6f6a66]">Philosophy</p>
+                <hr className="mt-4 border-0 border-t border-[#d8d5d2]" />
+                <blockquote className="mt-6 font-serif text-xl italic leading-8 sm:text-2xl">
+                  「本当に必要なのは、思考を妨げない最小限の機能だけである。」
+                </blockquote>
+              </div>
+            </div>
           </div>
 
           <nav className="flex flex-wrap gap-x-5 gap-y-2 py-6 font-mono text-[10px] uppercase tracking-[0.12em] text-[#6f6a66]" aria-label="ページ内案内">
