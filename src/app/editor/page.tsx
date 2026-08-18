@@ -159,10 +159,10 @@ export default function EditorPage() {
           </div>
         </div>
       </section>
-      <section className="mx-auto mt-8 w-full max-w-5xl border-t border-zinc-200 px-4 py-10 text-sm leading-7 text-zinc-700 sm:px-6" aria-labelledby="editor-guide-title">
-        <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
+      <section className="mx-auto mt-8 w-full max-w-[1600px] border-t border-zinc-200 px-3 py-10 text-sm leading-7 text-zinc-700 sm:px-5" aria-labelledby="editor-guide-title">
+        <div className="grid gap-8 md:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Markdown Guide</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">Markdown Guide</p>
             <h2 id="editor-guide-title" className="mt-2 text-xl font-bold tracking-tight text-zinc-900">Markdownを学びながら、見た目を確認できる無料エディタ</h2>
             <p className="mt-3">Markdown Easy Editorは、Markdownの記号と表示結果を同時に確認できる学習向けの無料Webエディタです。AIが生成した文章やメモを貼り付けて、見出し、強調、リスト、リンク、引用、表、コードブロックなどの記法を気軽に試せます。</p>
             <p className="mt-3">左側にMarkdownを書き、右側のプレビューで結果を確認してください。ツールバーのボタンにカーソルを合わせると、記法の意味と入力例が表示されます。</p>
