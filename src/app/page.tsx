@@ -1,6 +1,30 @@
-import Link from "next/link";
+import type { Metadata } from "next";`r`nimport Link from "next/link";
 import { SiteFooter } from "@/components/shared/SiteFooter";
 import { SiteHeader } from "@/components/shared/SiteHeader";
+
+export const metadata: Metadata = {
+  title: "LifeMargin｜小さな道具で、考える時間と余白をつくる",
+  description:
+    "LifeMarginは、不要な機能や複雑な操作を削ぎ落とした小さなWebツールをつくっています。Markdown Easy Editor、子どもの学びツールなどを提供しています。",
+  alternates: {
+    canonical: "https://lifemargin.net/",
+  },
+  openGraph: {
+    title: "LifeMargin｜小さな道具で、考える時間と余白をつくる",
+    description:
+      "不要な機能や複雑な操作を削ぎ落とした、小さなWebツールをつくっています 。",
+    url: "https://lifemargin.net/",
+    siteName: "LifeMargin",
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "LifeMargin｜小さな道具で、考える時間と余白をつくる",
+    description:
+      "不要な機能や複雑な操作を削ぎ落とした、小さなWebツールをつくっています 。",
+  },
+};
 
 interface Tool {
   number: string;
