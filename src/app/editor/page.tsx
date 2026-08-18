@@ -167,7 +167,8 @@ export default function EditorPage() {
             <p className="mt-3">Markdown Easy Editorは、Markdownの記号と表示結果を同時に確認できる学習向けの無料Webエディタです。AIが生成した文章やメモを貼り付けて、見出し、強調、リスト、リンク、引用、表、コードブロックなどの記法を気軽に試せます。</p>
             <p className="mt-3">左側にMarkdownを書き、右側のプレビューで結果を確認してください。ツールバーのボタンにカーソルを合わせると、記法の意味と入力例が表示されます。</p>
           </div>
-          <div className="border border-zinc-200 bg-white p-5">
+          {/* 上下パディングの合計を p-5 と同じ40pxに保ったまま、中身だけ8px下げる */}
+          <div className="border border-zinc-200 bg-white px-5 pb-3 pt-7">
             <h2 className="text-base font-bold text-zinc-900">対応している主な記法</h2>
             <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
               <li>見出し（#）</li>
