@@ -159,15 +159,15 @@ export default function EditorPage() {
           </div>
         </div>
       </section>
-      <section className="mx-auto mt-8 w-full max-w-[1600px] border-t border-zinc-200 px-3 py-10 text-sm leading-7 text-zinc-700 sm:px-5" aria-labelledby="editor-guide-title">
-        <div className="grid gap-8 md:grid-cols-2">
+      <section className="mx-auto mt-8 w-full max-w-4xl border-t border-zinc-200 px-3 py-10 text-sm leading-7 text-zinc-700 sm:px-5" aria-labelledby="editor-guide-title">
+        <div className="grid gap-8 md:grid-cols-[1.4fr_1fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">Markdown Guide</p>
             <h2 id="editor-guide-title" className="mt-2 text-xl font-bold tracking-tight text-zinc-900">Markdownを学びながら、見た目を確認できる無料エディタ</h2>
             <p className="mt-3">Markdown Easy Editorは、Markdownの記号と表示結果を同時に確認できる学習向けの無料Webエディタです。AIが生成した文章やメモを貼り付けて、見出し、強調、リスト、リンク、引用、表、コードブロックなどの記法を気軽に試せます。</p>
             <p className="mt-3">左側にMarkdownを書き、右側のプレビューで結果を確認してください。ツールバーのボタンにカーソルを合わせると、記法の意味と入力例が表示されます。</p>
           </div>
-          <div>
+          <div className="border border-zinc-200 bg-white p-5">
             <h2 className="text-base font-bold text-zinc-900">対応している主な記法</h2>
             <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
               <li>見出し（#）</li>
