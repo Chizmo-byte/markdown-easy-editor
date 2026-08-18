@@ -1,4 +1,5 @@
-import type { Metadata } from "next";`r`nimport Link from "next/link";
+import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteFooter } from "@/components/shared/SiteFooter";
 import { SiteHeader } from "@/components/shared/SiteHeader";
 
