@@ -12,13 +12,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-/** 見出し用の明朝体。日本語サブセットは重いため preload せず swap で読み込む。 */
+/**
+ * 見出し用の明朝体。日本語サブセットは重いため preload せず swap で読み込む。
+ * adjustFontFallback: false — 自動生成される代替face（実体は local(Times New Roman)）は
+ * 和文グリフを持たず、Windowsのフォントリンクでゴシック体に落ちてしまうため無効化する。
+ * ただしTurbopackはこの指定を無視する（webpackビルドでのみ効く）ので、実際の対策は
+ * globals.css 側でfamily名を直接指定してこの代替faceを経路から外すことで行っている。
+ */
 const shipporiMincho = Shippori_Mincho({
   variable: "--font-shippori-mincho",
   weight: ["500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
   preload: false,
+  adjustFontFallback: false,
 });
 
 /** 本文の欧文セリフ。和文は明朝体・システムフォントにフォールバックする。 */

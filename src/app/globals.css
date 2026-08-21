@@ -10,9 +10,15 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  /* Proof Sheet（トップページ）用。和文は明朝体へフォールバックさせる。 */
-  --font-serif: var(--font-source-serif), var(--font-shippori-mincho), "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
-  --font-mincho: var(--font-shippori-mincho), "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
+  /*
+   * Proof Sheet（トップページ）用。和文は明朝体へフォールバックさせる。
+   * next/font の変数（--font-shippori-mincho 等）は自動生成される代替face
+   * "... Fallback"（実体は local(Times New Roman)）を含み、和文グリフが無いため
+   * Windowsのフォントリンクでゴシック体に落ちる。Turbopackは adjustFontFallback:false を
+   * 無視するので、変数ではなく実際のfamily名を直接指定して代替faceを経路から外す。
+   */
+  --font-serif: "Source Serif 4", "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
+  --font-mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
 }
 
 @media (prefers-color-scheme: dark) {
