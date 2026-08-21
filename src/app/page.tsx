@@ -247,9 +247,10 @@ export default function LandingPage() {
           </section>
 
           <div className={`pb-[52px] pt-14 ${SHEET_PADDING}`}>
-            <div className="flex flex-wrap" aria-hidden="true">
+            {/* 8色 × 44px = 352px。狭い画面では折り返さず、各色が等分に縮む。 */}
+            <div className="flex w-full max-w-[352px] flex-row flex-nowrap" aria-hidden="true">
               {SCALE.map((color) => (
-                <span key={color} className="h-[22px] w-full min-[560px]:w-11" style={{ backgroundColor: color }} />
+                <span key={color} className="h-[22px] min-w-0 flex-1" style={{ backgroundColor: color }} />
               ))}
             </div>
             <div className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-[#d9d6d0] pt-3.5 text-xs tracking-[0.06em] text-[#8a857d]">
