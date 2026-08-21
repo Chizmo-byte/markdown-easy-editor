@@ -126,7 +126,7 @@ function PlateRow({ tool, isFirst, isLast }: { tool: Tool; isFirst: boolean; isL
       } ${isLast ? "border-b border-b-[#201e1d]" : ""}`}
     >
       <span
-        className={`font-[Georgia,serif] text-[52px] font-bold leading-[0.85] text-[#201e1d] oldstyle-nums min-[560px]:text-[64px] min-[900px]:text-[86px] ${PLATE_NUMBER_SHADOW}`}
+        className={`font-serif text-[52px] font-bold leading-[0.85] text-[#201e1d] min-[560px]:text-[64px] min-[900px]:text-[86px] ${PLATE_NUMBER_SHADOW}`}
         aria-hidden="true"
       >
         {tool.number}
