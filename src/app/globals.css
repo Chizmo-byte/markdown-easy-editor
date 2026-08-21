@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/*
+ * dark: バリアントをOS設定ではなく <html class="dark"> で駆動する（class戦略）。
+ * ダークモードは /editor のみの機能で、そこでは手動選択をOS設定より優先するため。
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -21,11 +27,13 @@
   --font-mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", YuMincho, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*
+ * body の地色もクラス側に揃える。OS設定を直接見ると、ライトを選んだユーザーの
+ * ページ地だけが暗いままになるため（.dark が付くのは /editor だけ）。
+ */
+.dark {
+  --background: #18181b; /* zinc-900 */
+  --foreground: #fafafa; /* zinc-50 */
 }
 
 body {
@@ -126,4 +134,26 @@ body {
   border: none;
   border-top: 1px solid rgba(127, 127, 127, 0.3);
   margin: 1em 0;
+}
+
+/*
+ * プレビューのダーク配色。
+ * コード・水平線は半透明グレーで指定済みのため、色を持つ箇所だけ上書きする。
+ */
+.dark .markdown-preview {
+  color: #e4e4e7;
+}
+.dark .markdown-preview th,
+.dark .markdown-preview td {
+  border-color: #3f3f46;
+}
+.dark .markdown-preview th {
+  background: #27272a;
+}
+.dark .markdown-preview blockquote {
+  border-left-color: #52525b;
+  color: #a1a1aa;
+}
+.dark .markdown-preview a {
+  color: #93c5fd;
 }

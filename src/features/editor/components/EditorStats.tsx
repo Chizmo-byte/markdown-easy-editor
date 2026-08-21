@@ -21,13 +21,13 @@ export function EditorStats({ value }: EditorStatsProps) {
 
   return (
     <div
-      className="flex shrink-0 items-center justify-between border-t border-zinc-200 bg-zinc-50 px-3 py-1.5 text-[11px] text-zinc-500"
+      className="flex shrink-0 items-center justify-between border-t border-zinc-200 bg-zinc-50 px-3 py-1.5 text-[11px] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400"
       aria-label="文章の統計"
     >
       <span>文字数 {characterCount}</span>
       <span>行数 {lineCount}</span>
       <span>改行 {lineBreakCount}</span>
-      <span className="text-zinc-400">Markdownを編集中</span>
+      <span className="text-zinc-400 dark:text-zinc-500">Markdownを編集中</span>
     </div>
   );
 }

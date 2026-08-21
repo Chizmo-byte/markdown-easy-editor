@@ -47,9 +47,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // suppressHydrationWarning: /editor の初期化スクリプトが描画前に dark クラスを足すため、
+  // サーバー側が返す className と食い違うのは想定内。
   return (
     <html
       lang="ja"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${shipporiMincho.variable} ${sourceSerif.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

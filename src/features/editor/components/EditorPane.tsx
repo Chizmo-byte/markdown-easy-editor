@@ -74,7 +74,7 @@ export function EditorPane({ value, onChange }: EditorPaneProps) {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-r border-zinc-200 bg-white">
+    <div className="flex h-full min-h-0 flex-col border-r border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
       <EditorToolbar onInsert={handleInsert} activeHelp={activeHelp} onHelpChange={setActiveHelp} />
       <div className="min-h-0 flex-1">
         <MarkdownInput value={value} onChange={onChange} textareaRef={textareaRef} />

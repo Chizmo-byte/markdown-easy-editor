@@ -11,9 +11,9 @@ interface MarkdownPreviewProps {
 export function MarkdownPreview({ markdown }: MarkdownPreviewProps) {
   if (!markdown.trim()) {
     return (
-      <div className="flex h-full items-center justify-center p-8 text-center text-sm text-zinc-400">
+      <div className="flex h-full items-center justify-center p-8 text-center text-sm text-zinc-400 dark:text-zinc-500">
         <div>
-          <p className="font-medium text-zinc-500">ここにプレビューが表示されます</p>
+          <p className="font-medium text-zinc-500 dark:text-zinc-400">ここにプレビューが表示されます</p>
           <p className="mt-2">左側にMarkdownを書いてみましょう</p>
         </div>
       </div>
@@ -21,7 +21,7 @@ export function MarkdownPreview({ markdown }: MarkdownPreviewProps) {
   }
 
   return (
-    <article className="markdown-preview h-full overflow-auto bg-white p-5 sm:p-8">
+    <article className="markdown-preview h-full overflow-auto bg-white p-5 sm:p-8 dark:bg-zinc-800">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSanitize]}

@@ -19,6 +19,8 @@ export function MarkdownInput({
   onChange,
   textareaRef,
 }: MarkdownInputProps) {
+  // bg-canvas / text-ink / text-ink-muted は旧デザインの名残で、現在の @theme に
+  // 定義が無く実際には効いていなかったため、zinc系のクラスへ置き換えている。
   return (
     <textarea
       ref={textareaRef}
@@ -27,7 +29,7 @@ export function MarkdownInput({
       placeholder="ここに文章を入力、またはObsidianからペーストしてください"
       spellCheck={false}
       aria-label="マークダウン入力"
-      className="h-full w-full resize-none bg-canvas p-4 font-mono text-sm text-ink outline-none placeholder:text-ink-muted"
+      className="h-full w-full resize-none bg-white p-4 font-mono text-sm text-zinc-900 outline-none placeholder:text-zinc-400 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500"
     />
   );
 }

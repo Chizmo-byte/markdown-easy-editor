@@ -46,7 +46,7 @@ export function EditorToolbar({ onInsert, activeHelp, onHelpChange }: EditorTool
   const selected = [...BASIC_BUTTONS, ...MORE_BUTTONS].find((button) => button.action.label === activeHelp);
 
   return (
-    <div className="relative z-20 shrink-0 border-b bg-white">
+    <div className="relative z-20 shrink-0 border-b bg-white dark:border-zinc-700 dark:bg-zinc-800">
       <div className="flex gap-1.5 overflow-x-auto p-2">
         {buttons.map(({ label, shortcut, tip, action }) => {
           const isActive = activeHelp === action.label;
@@ -60,25 +60,25 @@ export function EditorToolbar({ onInsert, activeHelp, onHelpChange }: EditorTool
                 onFocus={() => onHelpChange(action.label)}
                 onBlur={() => onHelpChange(null)}
                 aria-describedby={`help-${action.label}`}
-                className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${isActive ? "border-zinc-800 bg-zinc-800 text-white" : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 hover:bg-white"}`}
+                className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${isActive ? "border-zinc-800 bg-zinc-800 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900" : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-700"}`}
               >
                 {label}
               </button>
-              <span id={`help-${action.label}`} role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 hidden w-56 -translate-x-1/2 rounded-lg bg-zinc-900 p-3 text-left text-xs text-white shadow-xl group-hover:block group-focus-within:block">
+              <span id={`help-${action.label}`} role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 hidden w-56 -translate-x-1/2 rounded-lg bg-zinc-900 p-3 text-left text-xs text-white shadow-xl group-hover:block group-focus-within:block dark:bg-zinc-700">
                 <strong className="block text-zinc-100">{shortcut}</strong>
                 <span className="mt-1 block leading-relaxed text-zinc-300">{tip}</span>
               </span>
             </div>
           );
         })}
-        <button type="button" onClick={() => setShowMore((value) => !value)} className="shrink-0 rounded-md border border-dashed border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-500 hover:border-zinc-500 hover:text-zinc-800">
+        <button type="button" onClick={() => setShowMore((value) => !value)} className="shrink-0 rounded-md border border-dashed border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-500 hover:border-zinc-500 hover:text-zinc-800 dark:border-zinc-600 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:text-zinc-100">
           {showMore ? "閉じる" : "その他"}
         </button>
       </div>
       {selected && (
-        <div className="border-t bg-zinc-50 px-3 py-2 text-xs text-zinc-600">
-          <span className="font-semibold text-zinc-800">{selected.action.label}</span>
-          <span className="mx-2 text-zinc-300">—</span>
+        <div className="border-t bg-zinc-50 px-3 py-2 text-xs text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+          <span className="font-semibold text-zinc-800 dark:text-zinc-100">{selected.action.label}</span>
+          <span className="mx-2 text-zinc-300 dark:text-zinc-600">—</span>
           {selected.tip}
         </div>
       )}

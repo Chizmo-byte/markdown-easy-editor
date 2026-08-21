@@ -5,6 +5,7 @@ import { MarkdownPreview } from "@/features/editor/components/MarkdownPreview";
 import { EditorPane } from "@/features/editor/components/EditorPane";
 import { SiteFooter } from "@/components/shared/SiteFooter";
 import { SiteHeader } from "@/components/shared/SiteHeader";
+import { ThemeToggle } from "@/features/editor/components/ThemeToggle";
 
 const SAMPLE_MARKDOWN = `# Markdownを始めよう
 
@@ -104,73 +105,74 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 text-zinc-900">
+    <div className="flex min-h-screen flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50">
       <SiteHeader current="editor" />
       <main className="flex flex-1 flex-col">
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6 dark:border-zinc-700 dark:bg-zinc-800">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">Learning Markdown</p>
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-500">Learning Markdown</p>
           <h1 className="text-lg font-bold tracking-tight sm:text-xl">Markdown Easy Editor</h1>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5 md:hidden" role="group" aria-label="表示モード">
+          <div className="flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5 md:hidden dark:border-zinc-700 dark:bg-zinc-900" role="group" aria-label="表示モード">
             {(["editor", "preview", "split"] as const).map((mode) => (
-              <button key={mode} type="button" onClick={() => setView(mode)} className={`rounded px-2.5 py-1 text-xs ${view === mode ? "bg-zinc-800 text-white" : "text-zinc-600"}`}>
+              <button key={mode} type="button" onClick={() => setView(mode)} className={`rounded px-2.5 py-1 text-xs ${view === mode ? "bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900" : "text-zinc-600 dark:text-zinc-400"}`}>
                 {mode === "editor" ? "編集" : mode === "preview" ? "プレビュー" : "分割"}
               </button>
             ))}
           </div>
-          <button type="button" onClick={handleCopy} className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50">コピー</button>
-          <button type="button" onClick={handleDownload} className="rounded-md border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100">.md保存</button>
-          <button type="button" onClick={handleClear} className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50">クリア</button>
+          <button type="button" onClick={handleCopy} className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700">コピー</button>
+          <button type="button" onClick={handleDownload} className="rounded-md border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 dark:border-indigo-400/40 dark:bg-indigo-400/10 dark:text-indigo-300 dark:hover:bg-indigo-400/20">.md保存</button>
+          <button type="button" onClick={handleClear} className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700">クリア</button>
+          <ThemeToggle />
         </div>
       </header>
 
       <section className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col p-3 sm:p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-zinc-800">書いて、見て、覚える</h2>
-            <p className="text-xs text-zinc-500">ボタンにカーソルを合わせると記法の使い方が分かります。</p>
+            <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">書いて、見て、覚える</h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">ボタンにカーソルを合わせると記法の使い方が分かります。</p>
           </div>
           <div className="flex items-center gap-3">
-            <p className="hidden text-xs text-zinc-400 md:block">入力内容はこのブラウザ内で処理されます</p>
-            <p className="min-h-4 text-xs text-emerald-600" role="status" aria-live="polite">{actionMessage}</p>
+            <p className="hidden text-xs text-zinc-400 md:block dark:text-zinc-500">入力内容はこのブラウザ内で処理されます</p>
+            <p className="min-h-4 text-xs text-emerald-600 dark:text-emerald-400" role="status" aria-live="polite">{actionMessage}</p>
           </div>
         </div>
 
-        <div className="mb-3 flex items-start gap-3 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2.5 text-xs text-indigo-950">
-          <span className="mt-0.5 rounded bg-indigo-200 px-1.5 py-0.5 font-bold text-indigo-800">学習ヒント</span>
+        <div className="mb-3 flex items-start gap-3 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2.5 text-xs text-indigo-950 dark:border-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-50">
+          <span className="mt-0.5 rounded bg-indigo-200 px-1.5 py-0.5 font-bold text-indigo-800 dark:bg-indigo-400/25 dark:text-indigo-200">学習ヒント</span>
           <div className="min-w-0">
             <p className="font-semibold">{hint.title}</p>
-            <p className="mt-0.5 text-indigo-800">{hint.description}</p>
-            <code className="mt-1 block text-[11px] text-indigo-700">{hint.example}</code>
+            <p className="mt-0.5 text-indigo-800 dark:text-indigo-200">{hint.description}</p>
+            <code className="mt-1 block text-[11px] text-indigo-700 dark:text-indigo-300">{hint.example}</code>
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm md:min-h-[calc(100vh-196px)]">
+        <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm md:min-h-[calc(100vh-196px)] dark:border-zinc-700 dark:bg-zinc-800">
           <div className="grid h-full grid-cols-1 md:grid-cols-2">
             <div className={`${view === "preview" ? "hidden md:block" : "block"} min-h-0`}><EditorPane value={text} onChange={handleChange} /></div>
-            <div className={`${view === "editor" ? "hidden md:block" : "block"} min-h-0 border-t border-zinc-200 md:border-l md:border-t-0`}>
+            <div className={`${view === "editor" ? "hidden md:block" : "block"} min-h-0 border-t border-zinc-200 md:border-l md:border-t-0 dark:border-zinc-700`}>
               <div className="flex h-full min-h-0 flex-col">
-                <div className="flex shrink-0 items-center justify-between border-b border-zinc-100 bg-zinc-50 px-4 py-2"><span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Preview</span><span className="text-[11px] text-zinc-400">リアルタイム表示</span></div>
+                <div className="flex shrink-0 items-center justify-between border-b border-zinc-100 bg-zinc-50 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"><span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Preview</span><span className="text-[11px] text-zinc-400 dark:text-zinc-500">リアルタイム表示</span></div>
                 <div className="min-h-0 flex-1"><MarkdownPreview markdown={markdown} /></div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section className="mx-auto mt-8 w-full max-w-4xl border-t border-zinc-200 px-3 py-10 text-sm leading-7 text-zinc-700 sm:px-5" aria-labelledby="editor-guide-title">
+      <section className="mx-auto mt-8 w-full max-w-4xl border-t border-zinc-200 px-3 py-10 text-sm leading-7 text-zinc-700 sm:px-5 dark:border-zinc-700 dark:text-zinc-300" aria-labelledby="editor-guide-title">
         {/* 左右カラム両方に掛かるセクションラベル */}
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Markdown Guide</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400">Markdown Guide</p>
         <div className="mt-2 grid gap-8 md:grid-cols-[1.4fr_1fr]">
           <div>
-            <h2 id="editor-guide-title" className="text-xl font-bold tracking-tight text-zinc-900">Markdownを学びながら、見た目を確認できる無料エディタ</h2>
+            <h2 id="editor-guide-title" className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Markdownを学びながら、見た目を確認できる無料エディタ</h2>
             <p className="mt-3">Markdown Easy Editorは、Markdownの記号と表示結果を同時に確認できる学習向けの無料Webエディタです。AIが生成した文章やメモを貼り付けて、見出し、強調、リスト、リンク、引用、表、コードブロックなどの記法を気軽に試せます。</p>
             <p className="mt-3">左側にMarkdownを書き、右側のプレビューで結果を確認してください。ツールバーのボタンにカーソルを合わせると、記法の意味と入力例が表示されます。</p>
           </div>
           {/* self-start で行の高さに引き伸ばさず、内容の高さに合わせる */}
-          <div className="self-start border border-zinc-200 bg-white p-5">
-            <h2 className="text-base font-bold text-zinc-900">対応している主な記法</h2>
+          <div className="self-start border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
+            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">対応している主な記法</h2>
             <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
               <li>見出し（#）</li>
               <li>太字・斜体</li>
@@ -184,12 +186,12 @@ export default function EditorPage() {
           </div>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <details className="rounded-lg border border-zinc-200 bg-white p-4">
-            <summary className="cursor-pointer font-semibold text-zinc-900">Markdownとは何ですか？</summary>
+          <details className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
+            <summary className="cursor-pointer font-semibold text-zinc-900 dark:text-zinc-50">Markdownとは何ですか？</summary>
             <p className="mt-2">Markdownは、記号を使って見出しやリストなどの文章構造を表現する軽量な書き方です。シンプルなテキストとして保存でき、ブログ、README、メモ、AIへの指示文など幅広く使われています。</p>
           </details>
-          <details className="rounded-lg border border-zinc-200 bg-white p-4">
-            <summary className="cursor-pointer font-semibold text-zinc-900">入力した内容は保存されますか？</summary>
+          <details className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
+            <summary className="cursor-pointer font-semibold text-zinc-900 dark:text-zinc-50">入力した内容は保存されますか？</summary>
             <p className="mt-2">このエディタは入力とプレビューをブラウザ内で処理します。現在の画面を閉じる前に、必要なMarkdownをコピーして保存してください。</p>
           </details>
         </div>

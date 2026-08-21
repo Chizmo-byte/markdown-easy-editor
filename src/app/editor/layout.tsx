@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/features/editor/theme/ThemeProvider";
+import { THEME_INIT_SCRIPT } from "@/features/editor/theme/theme";
 
 const editorUrl = "https://lifemargin.net/editor";
 
@@ -71,7 +73,9 @@ export default function EditorLayout({ children }: Readonly<{ children: React.Re
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      {children}
+      {/* children より前に同期実行させ、初回描画から正しい配色にする（FOUC対策）。 */}
+      <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      <ThemeProvider>{children}</ThemeProvider>
     </>
   );
 }
